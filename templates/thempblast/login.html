@@ -1,0 +1,2564 @@
+{% extends "thempblast/base.html" %}
+
+{% block extra_css %}
+<style>
+/* ============================================================
+   THE MP BLAST — Design Tokens
+   ============================================================ */
+    :root {
+      --mpb-red: #E31E24;
+      --mpb-red-dark: #B0161B;
+      --mpb-black: #111111;
+      --mpb-dark-gray: #333333;
+      --mpb-mid-gray: #6B6B6B;
+      --mpb-light-gray: #F2F2F2;
+      --mpb-border-gray: #E2E2E2;
+      --mpb-white: #FFFFFF;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --space-7: 48px;
+      --space-8: 64px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+
+      --font-head: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+      --font-body: 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
+
+      --shadow-card: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .06);
+      --shadow-hover: 0 6px 16px rgba(0, 0, 0, .12);
+
+      --header-h: 58px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--mpb-black);
+      background: var(--mpb-white);
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+      color: transparent;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: var(--font-head);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .container-fluid.px-page {
+      padding-left: var(--space-4);
+      padding-right: var(--space-4);
+    }
+
+    @media (min-width:768px) {
+      .container-fluid.px-page {
+        padding-left: var(--space-6);
+        padding-right: var(--space-6);
+      }
+    }
+
+    @media (min-width:1280px) {
+      .container-fluid.px-page {
+        padding-left: var(--space-7);
+        padding-right: var(--space-7);
+        max-width: 1360px;
+        margin: 0 auto;
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--mpb-red);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
+   Utility
+   ============================================================ */
+    .text-mpb-red {
+      color: var(--mpb-red) !important;
+    }
+
+    .bg-mpb-red {
+      background: var(--mpb-red) !important;
+    }
+
+    .text-meta {
+      color: var(--mpb-mid-gray);
+      font-size: 12.5px;
+    }
+
+    .badge-cat {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--mpb-black);
+      padding: 3px 9px;
+      border-radius: var(--radius-sm);
+    }
+
+    .badge-cat.cat-politics {
+      background: #8a1c1c;
+    }
+
+    .badge-cat.cat-crime {
+      background: #212121;
+    }
+
+    .badge-cat.cat-education {
+      background: #1a5e3a;
+    }
+
+    .badge-cat.cat-business {
+      background: #1a4d8a;
+    }
+
+    .badge-cat.cat-sports {
+      background: #a15c00;
+    }
+
+    .badge-cat.cat-entertainment {
+      background: #6a1a8a;
+    }
+
+    .badge-cat.cat-national {
+      background: #333;
+    }
+
+    .badge-cat.cat-mp {
+      background: var(--mpb-red);
+    }
+
+    .badge-live {
+      background: var(--mpb-red);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-live .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .35;
+      }
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+      border-bottom: 3px solid var(--mpb-black);
+      padding-bottom: var(--space-2);
+    }
+
+    .section-heading h2 {
+      font-size: 19px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-heading h2 .bar {
+      width: 5px;
+      height: 20px;
+      background: var(--mpb-red);
+      display: inline-block;
+      border-radius: 2px;
+    }
+
+    .section-heading .view-all {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--mpb-red);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    @media (min-width:768px) {
+      .section-heading h2 {
+        font-size: 22px;
+      }
+    }
+
+    section.news-section {
+      padding: var(--space-6) 0;
+    }
+
+    section.news-section.alt-bg {
+      background: var(--mpb-light-gray);
+    }
+
+    .hover-lift {
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+
+    /* ============================================================
+   HEADER
+   ============================================================ */
+    .topbar {
+      background: var(--mpb-black);
+      color: #ddd;
+      font-size: 12px;
+    }
+
+    .topbar .container-fluid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 30px;
+    }
+
+    .topbar a {
+      color: #ddd;
+    }
+
+    .topbar .topbar-date {
+      color: #aaa;
+    }
+
+    .topbar .social-mini a {
+      margin-left: 10px;
+      font-size: 13px;
+    }
+
+    .topbar .social-mini a:hover {
+      color: var(--mpb-red);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      background: #fff;
+      border-bottom: 1px solid var(--mpb-border-gray);
+      height: var(--header-h);
+    }
+
+    .site-header .container-fluid {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+    }
+
+    .brand-logo {
+      height: 36px;
+      width: auto;
+      max-width: 150px;
+      object-fit: contain;
+    }
+
+    @media (min-width:768px) {
+      .brand-logo {
+        height: 40px;
+        max-width: 170px;
+      }
+    }
+
+    @media (min-width:1024px) {
+      .brand-logo {
+        height: 42px;
+        max-width: 180px;
+      }
+    }
+
+    .offcanvas-logo {
+      height: 56px;
+      width: auto;
+      max-width: 220px;
+      object-fit: contain;
+    }
+
+    footer.site-footer .brand-mark {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -.5px;
+    }
+
+    footer.site-footer .brand-mark .p-red {
+      color: var(--mpb-red);
+    }
+
+    .header-icon-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--mpb-black);
+      padding: 6px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .header-nav-desktop {
+      display: none;
+    }
+
+    @media (min-width:768px) {
+      .header-nav-desktop {
+        display: flex;
+        gap: 14px;
+      }
+
+      .header-nav-desktop a {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--mpb-dark-gray);
+        white-space: nowrap;
+      }
+
+      .header-nav-desktop a:hover {
+        color: var(--mpb-red);
+      }
+    }
+
+    @media (min-width:1024px) {
+      .header-nav-desktop {
+        gap: 22px;
+      }
+
+      .header-nav-desktop a {
+        font-size: 13.5px;
+      }
+    }
+
+    /* Offcanvas mobile nav */
+    .offcanvas-header {
+      border-bottom: 1px solid var(--mpb-border-gray);
+    }
+
+    .offcanvas-header .btn-close,
+    .modal .btn-close {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-position: center;
+    }
+
+    .mobile-nav .nav-link {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--mpb-black);
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--mpb-border-gray);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-nav .nav-link i {
+      color: var(--mpb-mid-gray);
+      font-size: 14px;
+    }
+
+    /* ============================================================
+   BREAKING TICKER
+   ============================================================ */
+    .ticker-wrap {
+      background: var(--mpb-red);
+      color: #fff;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      height: 44px;
+    }
+
+    .ticker-label {
+      background: var(--mpb-black);
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .ticker-label .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--mpb-red);
+      animation: pulse 1.3s infinite;
+    }
+
+    .ticker-viewport {
+      flex: 1 1 auto;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 48px;
+      white-space: nowrap;
+      will-change: transform;
+      animation: ticker-scroll 32s linear infinite;
+      padding-left: 100%;
+    }
+
+    .ticker-wrap:hover .ticker-track,
+    .ticker-wrap:focus-within .ticker-track {
+      animation-play-state: paused;
+    }
+
+    .ticker-track a {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .ticker-track a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes ticker-scroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .ticker-close {
+      background: none;
+      border: none;
+      color: #fff;
+      padding: 0 14px;
+      font-size: 16px;
+      flex: 0 0 auto;
+      min-width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ============================================================
+   CARDS
+   ============================================================ */
+    .card-mpb {
+      background: #fff;
+      border: 1px solid var(--mpb-border-gray);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-mpb .thumb {
+      position: relative;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      background: var(--mpb-light-gray);
+    }
+
+    .card-mpb .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-mpb .thumb .badge-cat {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+    }
+
+    .card-mpb .thumb .badge-live {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+
+    .card-mpb .body {
+      padding: var(--space-3) var(--space-3) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .card-mpb .headline {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.35;
+      color: var(--mpb-black);
+    }
+
+    .card-mpb .summary {
+      font-size: 13px;
+      color: var(--mpb-dark-gray);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-mpb .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 6px;
+      font-size: 12px;
+      color: var(--mpb-mid-gray);
+    }
+
+    .card-mpb .meta-row .loc {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-mpb .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .card-mpb .stat-row span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Featured / Hero */
+    .card-featured {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      height: 100%;
+      min-height: 260px;
+      display: flex;
+      align-items: flex-end;
+      background: var(--mpb-black);
+    }
+
+    .card-featured img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .82;
+    }
+
+    .card-featured::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, .88) 100%);
+    }
+
+    .card-featured .body {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-4);
+      color: #fff;
+      width: 100%;
+    }
+
+    .card-featured .headline {
+      font-size: 19px;
+      color: #fff;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-featured .summary {
+      color: #e6e6e6;
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-featured .meta-row {
+      color: #ddd;
+    }
+
+    @media (min-width:768px) {
+      .card-featured {
+        min-height: 380px;
+      }
+
+      .card-featured .headline {
+        font-size: 24px;
+      }
+    }
+
+    .card-featured-sub {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      min-height: 150px;
+      display: flex;
+      align-items: flex-end;
+      background: #222;
+    }
+
+    .card-featured-sub img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .85;
+    }
+
+    .card-featured-sub::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, .85) 100%);
+    }
+
+    .card-featured-sub .body {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-3);
+      color: #fff;
+    }
+
+    .card-featured-sub .headline {
+      font-size: 14px;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    /* Horizontal card */
+    .card-horizontal {
+      display: flex;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--mpb-border-gray);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      padding: 8px;
+    }
+
+    .card-horizontal .thumb {
+      flex: 0 0 96px;
+      width: 96px;
+      height: 76px;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      background: var(--mpb-light-gray);
+    }
+
+    .card-horizontal .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-horizontal .body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .card-horizontal .headline {
+      font-family: var(--font-head);
+      font-weight: 600;
+      font-size: 13.5px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    @media (min-width:768px) {
+      .card-horizontal .thumb {
+        flex-basis: 120px;
+        width: 120px;
+        height: 88px;
+      }
+
+      .card-horizontal .headline {
+        font-size: 14.5px;
+      }
+    }
+
+
+    /* Breaking (ticker list style used in "most read" alt) */
+    .icon-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+
+    /* Send News CTA */
+    .send-news-banner {
+      background: var(--mpb-black);
+      border-radius: var(--radius-md);
+      padding: var(--space-6) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .send-news-banner::before {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(227, 30, 36, .35), transparent 70%);
+    }
+
+    .send-news-banner h3 {
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .send-news-banner p {
+      color: #ccc;
+      font-size: 13.5px;
+      margin: 0;
+      max-width: 480px;
+    }
+
+    .btn-mpb-red {
+      background: var(--mpb-red);
+      border-color: var(--mpb-red);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 22px;
+      border-radius: 6px;
+    }
+
+    .btn-mpb-red:hover {
+      background: var(--mpb-red-dark);
+      border-color: var(--mpb-red-dark);
+      color: #fff;
+    }
+
+    .btn-mpb-outline {
+      border: 1.5px solid var(--mpb-border-gray);
+      color: var(--mpb-dark-gray);
+      font-weight: 600;
+      font-size: 13.5px;
+      padding: 9px 18px;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .btn-mpb-outline:hover {
+      border-color: var(--mpb-black);
+      color: var(--mpb-black);
+    }
+
+    @media (min-width:768px) {
+      .send-news-banner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-6) var(--space-7);
+      }
+    }
+
+    /* ============================================================
+   FOOTER
+   ============================================================ */
+    footer.site-footer {
+      background: var(--mpb-black);
+      color: #bbb;
+      padding-top: var(--space-7);
+    }
+
+    footer.site-footer h6 {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    footer.site-footer a {
+      color: #aaa;
+      font-size: 13.5px;
+    }
+
+    footer.site-footer a:hover {
+      color: var(--mpb-red);
+    }
+
+    footer.site-footer .footer-links li {
+      margin-bottom: 8px;
+    }
+
+    footer.site-footer .social-row a {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #444;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ddd;
+      margin-right: 8px;
+    }
+
+    footer.site-footer .social-row a:hover {
+      background: var(--mpb-red);
+      border-color: var(--mpb-red);
+      color: #fff;
+    }
+
+    footer.site-footer .footer-bottom {
+      border-top: 1px solid #2a2a2a;
+      margin-top: var(--space-6);
+      padding: var(--space-4) 64px var(--space-4) var(--space-4);
+      font-size: 12.5px;
+      color: #888;
+    }
+
+    footer.site-footer .footer-bottom a {
+      color: #999;
+    }
+
+
+    /* Back to top */
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--mpb-red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+      z-index: 1020;
+      opacity: 0;
+      visibility: hidden;
+      transition: .2s ease;
+      border: none;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Section grid helpers */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    @media (min-width:576px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    @media (min-width:576px) {
+      .grid-auto {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+      }
+    }
+
+    @media (min-width:1024px) {
+      .grid-auto {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  
+
+/* ============================================================
+   LOGIN / SIGNUP PAGE
+   ============================================================ */
+.auth-page {
+  min-height: calc(100vh - var(--header-h) - 44px);
+  padding: clamp(32px, 6vw, 72px) var(--space-4);
+  background:
+    linear-gradient(rgba(242,242,242,.82), rgba(242,242,242,.82)),
+    #f2f2f2;
+  display: flex;
+  align-items: center;
+}
+
+.auth-wrap {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.auth-card {
+  background: #fff;
+  border: 1px solid var(--mpb-border-gray);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.auth-card-header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--mpb-border-gray);
+}
+
+.auth-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mpb-red);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+
+.auth-title {
+  font-size: clamp(24px, 5vw, 30px);
+  line-height: 1.2;
+  margin-bottom: 7px;
+}
+
+.auth-subtitle {
+  margin: 0;
+  color: var(--mpb-mid-gray);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.auth-card-body {
+  padding: 24px 28px 28px;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 24px;
+  background: var(--mpb-light-gray);
+  border-radius: 8px;
+}
+
+.auth-tab {
+  border: 0;
+  background: transparent;
+  color: var(--mpb-mid-gray);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.auth-tab.active {
+  background: #fff;
+  color: var(--mpb-black);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.auth-step {
+  display: none;
+}
+
+.auth-step.active {
+  display: block;
+}
+
+.auth-form-group {
+  margin-bottom: 17px;
+}
+
+.auth-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+.auth-input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--mpb-border-gray);
+  border-radius: 7px;
+  padding: 10px 13px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--mpb-black);
+  background: #fff;
+}
+
+.auth-input:focus {
+  border-color: var(--mpb-red);
+  outline: 2px solid rgba(227,30,36,.12);
+  outline-offset: 0;
+}
+
+.auth-input.is-invalid {
+  border-color: var(--mpb-red);
+}
+
+.auth-error {
+  display: none;
+  margin-top: 6px;
+  color: var(--mpb-red);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.auth-error.show {
+  display: block;
+}
+
+.auth-primary {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--mpb-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .18s ease, transform .18s ease;
+}
+
+.auth-primary:hover {
+  background: var(--mpb-red-dark);
+}
+
+.auth-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.auth-secondary {
+  border: 1px solid var(--mpb-border-gray);
+  background: #fff;
+  color: var(--mpb-black);
+  border-radius: 7px;
+  min-height: 44px;
+  padding: 9px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.auth-actions > * {
+  flex: 1;
+}
+
+.auth-note {
+  margin-top: 14px;
+  color: var(--mpb-mid-gray);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.auth-demo {
+  margin-top: 14px;
+  border: 1px dashed var(--mpb-border-gray);
+  background: #fafafa;
+  border-radius: 7px;
+  padding: 10px 12px;
+  color: var(--mpb-mid-gray);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.auth-demo strong {
+  color: var(--mpb-black);
+}
+
+.otp-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 7px;
+  margin: 18px 0 10px;
+}
+
+.otp-digit {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  text-align: center;
+  font-size: 19px;
+  font-weight: 700;
+  border: 1px solid var(--mpb-border-gray);
+  border-radius: 7px;
+}
+
+.otp-digit:focus {
+  border-color: var(--mpb-red);
+  outline: 2px solid rgba(227,30,36,.12);
+}
+
+.otp-timer {
+  font-size: 12px;
+  color: var(--mpb-mid-gray);
+  text-align: center;
+  margin-top: 9px;
+}
+
+.otp-timer strong {
+  color: var(--mpb-red);
+}
+
+.auth-success {
+  text-align: center;
+  padding: 12px 0 4px;
+}
+
+.auth-success-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #edf8f0;
+  color: #198754;
+  font-size: 28px;
+  margin-bottom: 14px;
+}
+
+.auth-success h2 {
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+
+.auth-success p {
+  color: var(--mpb-mid-gray);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.account-box {
+  border: 1px solid var(--mpb-border-gray);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.account-box-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.account-box-row + .account-box-row {
+  border-top: 1px solid var(--mpb-border-gray);
+}
+
+.account-box-label {
+  color: var(--mpb-mid-gray);
+}
+
+.account-box-value {
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.auth-legal {
+  margin-top: 18px;
+  text-align: center;
+  color: var(--mpb-mid-gray);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
+.auth-legal a {
+  color: var(--mpb-red);
+}
+
+@media (max-width: 575.98px) {
+  .auth-page {
+    padding: 24px 12px 40px;
+  }
+
+  .auth-card-header,
+  .auth-card-body {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .auth-actions {
+    flex-direction: column;
+  }
+
+  .otp-grid {
+    gap: 5px;
+  }
+
+  .otp-digit {
+    height: 44px;
+    font-size: 17px;
+  }
+}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="auth-page" aria-labelledby="auth-title">
+    <div class="auth-wrap">
+      <div class="auth-card">
+
+        <div class="auth-card-header">
+          <div class="auth-kicker">
+            <i class="bi bi-shield-check" aria-hidden="true"></i>
+            सुरक्षित प्रवेश
+          </div>
+          <h1 class="auth-title" id="auth-title">लॉगिन / साइन अप</h1>
+          <p class="auth-subtitle">
+            अपने ईमेल को OTP से सत्यापित करके THE MP BLAST में लॉगिन करें या नया अकाउंट बनाएं।
+          </p>
+        </div>
+
+        <div class="auth-card-body">
+
+          <div class="auth-tabs" role="tablist" aria-label="अकाउंट विकल्प">
+            <button type="button" class="auth-tab active" id="loginTab"
+                    role="tab" aria-selected="true" aria-controls="loginFlow">
+              लॉगिन
+            </button>
+            <button type="button" class="auth-tab" id="signupTab"
+                    role="tab" aria-selected="false" aria-controls="signupFlow">
+              साइन अप
+            </button>
+          </div>
+
+          <!-- Existing-user login flow -->
+          <div id="loginFlow">
+            <div class="auth-step active" id="loginEmailStep">
+              <form id="loginEmailForm" novalidate>
+                <div class="auth-form-group">
+                  <label for="loginEmail">ईमेल पता</label>
+                  <input type="email" id="loginEmail" class="auth-input"
+                         autocomplete="email" inputmode="email"
+                         placeholder="आपका ईमेल पता" required>
+                  <div class="auth-error" id="loginEmailError" role="alert"></div>
+                </div>
+                <button type="submit" class="auth-primary">ईमेल पर OTP भेजें</button>
+                <p class="auth-note">
+                  लॉगिन के लिए पासवर्ड की आवश्यकता नहीं है। हम आपके ईमेल पर एक OTP भेजकर पहचान सत्यापित करेंगे।
+                </p>
+              </form>
+            </div>
+
+            <div class="auth-step" id="loginOtpStep">
+              <p class="auth-subtitle">
+                OTP भेजा गया है: <strong id="loginOtpEmail"></strong>
+              </p>
+
+              <div class="otp-grid" id="loginOtpGrid">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 1">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 2">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 3">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 4">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 5">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 6">
+              </div>
+
+              <div class="auth-error" id="loginOtpError" role="alert"></div>
+
+              <button type="button" class="auth-primary" id="loginVerifyBtn">OTP सत्यापित करें</button>
+
+              <div class="otp-timer" id="loginTimer">OTP समाप्त होने में <strong>02:00</strong></div>
+
+              <div class="auth-actions">
+                <button type="button" class="auth-secondary" id="loginChangeEmail">ईमेल बदलें</button>
+                <button type="button" class="auth-secondary" id="loginResend" disabled>OTP फिर भेजें</button>
+              </div>
+
+              <div class="auth-demo" id="loginDemoBox" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <!-- New-user signup flow -->
+          <div id="signupFlow" class="d-none">
+            <div class="auth-step active" id="signupDetailsStep">
+              <form id="signupForm" novalidate>
+                <div class="auth-form-group">
+                  <label for="signupName">पूरा नाम</label>
+                  <input type="text" id="signupName" class="auth-input"
+                         autocomplete="name" placeholder="आपका पूरा नाम" required>
+                  <div class="auth-error" id="signupNameError" role="alert"></div>
+                </div>
+
+                <div class="auth-form-group">
+                  <label for="signupEmail">ईमेल पता</label>
+                  <input type="email" id="signupEmail" class="auth-input"
+                         autocomplete="email" inputmode="email"
+                         placeholder="आपका ईमेल पता" required>
+                  <div class="auth-error" id="signupEmailError" role="alert"></div>
+                </div>
+
+                <button type="submit" class="auth-primary">ईमेल पर OTP भेजें</button>
+
+                <p class="auth-note">
+                  साइन अप करने के लिए आपके नाम और ईमेल की आवश्यकता होगी। अकाउंट की पुष्टि OTP से की जाएगी।
+                </p>
+              </form>
+            </div>
+
+            <div class="auth-step" id="signupOtpStep">
+              <p class="auth-subtitle">
+                OTP भेजा गया है: <strong id="signupOtpEmail"></strong>
+              </p>
+
+              <div class="otp-grid" id="signupOtpGrid">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 1">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 2">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 3">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 4">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 5">
+                <input class="otp-digit" inputmode="numeric" maxlength="1" aria-label="OTP अंक 6">
+              </div>
+
+              <div class="auth-error" id="signupOtpError" role="alert"></div>
+
+              <button type="button" class="auth-primary" id="signupVerifyBtn">OTP सत्यापित करके अकाउंट बनाएं</button>
+
+              <div class="otp-timer" id="signupTimer">OTP समाप्त होने में <strong>02:00</strong></div>
+
+              <div class="auth-actions">
+                <button type="button" class="auth-secondary" id="signupChangeEmail">वापस जाएं</button>
+                <button type="button" class="auth-secondary" id="signupResend" disabled>OTP फिर भेजें</button>
+              </div>
+
+              <div class="auth-demo" id="signupDemoBox" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <!-- Logged-in state -->
+          <div class="auth-step" id="accountStep">
+            <div class="auth-success">
+              <div class="auth-success-icon">
+                <i class="bi bi-person-check-fill" aria-hidden="true"></i>
+              </div>
+              <h2>आप लॉगिन हैं</h2>
+              <p id="accountMessage">आपका अकाउंट सफलतापूर्वक सत्यापित हो गया है।</p>
+
+              <div class="account-box">
+                <div class="account-box-row">
+                  <span class="account-box-label">नाम</span>
+                  <span class="account-box-value" id="accountName">—</span>
+                </div>
+                <div class="account-box-row">
+                  <span class="account-box-label">ईमेल</span>
+                  <span class="account-box-value" id="accountEmail">—</span>
+                </div>
+              </div>
+
+              <div class="auth-actions">
+                <a href="index.html" class="auth-primary text-center d-flex align-items-center justify-content-center">
+                  होम पेज
+                </a>
+                <button type="button" class="auth-secondary" id="logoutBtn">लॉगआउट</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-legal">
+            आगे बढ़कर आप हमारी
+            <a href="about.html#privacy-policy">गोपनीयता नीति</a>
+            और
+            <a href="about.html#terms-conditions">नियम व शर्तों</a>
+            से सहमत होते हैं।
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>/* Shared page utilities needed by the index header/footer. */
+(function () {
+  const ticker = document.getElementById('breakingTicker');
+  const tickerClose = document.getElementById('tickerClose');
+  if (ticker && tickerClose) {
+    tickerClose.addEventListener('click', () => ticker.remove());
+  }
+
+  const backToTop = document.getElementById('backToTop');
+  if (backToTop) {
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('show', window.scrollY > 420);
+    }, { passive: true });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+})();</script>
+
+<!-- // this is second js  -->
+<script>
+(function () {
+  'use strict';
+
+  /*
+   * THE MP BLAST
+   * Real passwordless authentication frontend
+   *
+   * OTP generation and verification happen on Django.
+   * The browser never creates, stores, or displays the OTP.
+   */
+
+  const OTP_TTL = 5 * 60 * 1000; // Django OTP lifetime: 5 minutes
+  let loginCountdownId = null;
+  let signupCountdownId = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  /* ============================================================
+     DOM REFERENCES
+     ============================================================ */
+
+  const loginTab = $('loginTab');
+  const signupTab = $('signupTab');
+  const loginFlow = $('loginFlow');
+  const signupFlow = $('signupFlow');
+
+  const loginEmailForm = $('loginEmailForm');
+  const loginEmail = $('loginEmail');
+  const loginEmailError = $('loginEmailError');
+  const loginEmailStep = $('loginEmailStep');
+  const loginOtpStep = $('loginOtpStep');
+  const loginOtpEmail = $('loginOtpEmail');
+  const loginOtpError = $('loginOtpError');
+  const loginVerifyBtn = $('loginVerifyBtn');
+  const loginChangeEmail = $('loginChangeEmail');
+  const loginResend = $('loginResend');
+  const loginTimer = $('loginTimer');
+  const loginDemoBox = $('loginDemoBox');
+  const loginOtpInputs = [
+    ...document.querySelectorAll('#loginOtpGrid .otp-digit')
+  ];
+
+  const signupForm = $('signupForm');
+  const signupName = $('signupName');
+  const signupEmail = $('signupEmail');
+  const signupNameError = $('signupNameError');
+  const signupEmailError = $('signupEmailError');
+  const signupDetailsStep = $('signupDetailsStep');
+  const signupOtpStep = $('signupOtpStep');
+  const signupOtpEmail = $('signupOtpEmail');
+  const signupOtpError = $('signupOtpError');
+  const signupVerifyBtn = $('signupVerifyBtn');
+  const signupChangeEmail = $('signupChangeEmail');
+  const signupResend = $('signupResend');
+  const signupTimer = $('signupTimer');
+  const signupDemoBox = $('signupDemoBox');
+  const signupOtpInputs = [
+    ...document.querySelectorAll('#signupOtpGrid .otp-digit')
+  ];
+
+  const accountStep = $('accountStep');
+  const accountName = $('accountName');
+  const accountEmail = $('accountEmail');
+  const accountMessage = $('accountMessage');
+  const logoutBtn = $('logoutBtn');
+
+
+  /* ============================================================
+     COOKIE / CSRF
+     ============================================================ */
+
+  function getCookie(name) {
+    const cookieString = `; ${document.cookie}`;
+    const parts = cookieString.split(`; ${name}=`);
+
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+
+    return null;
+  }
+
+  async function ensureCsrfToken() {
+    let token = getCookie('csrftoken');
+
+    if (token) {
+      return token;
+    }
+
+    const response = await fetch('/api/auth/csrf/', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('सुरक्षा टोकन प्राप्त नहीं हो सका।');
+    }
+
+    token = getCookie('csrftoken');
+
+    if (!token) {
+      throw new Error('सुरक्षा टोकन उपलब्ध नहीं है।');
+    }
+
+    return token;
+  }
+
+
+  /* ============================================================
+     API HELPER
+     ============================================================ */
+
+  async function postAuthApi(url, payload) {
+    const csrfToken = await ensureCsrfToken();
+
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    let data = null;
+
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = null;
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data?.message ||
+        data?.detail ||
+        'अनुरोध पूरा नहीं हो सका।'
+      );
+    }
+
+    return data;
+  }
+
+  async function getCurrentUser() {
+    const response = await fetch('/api/auth/me/', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('यूज़र जानकारी प्राप्त नहीं हो सकी।');
+    }
+
+    return response.json();
+  }
+
+
+  /* ============================================================
+     VALIDATION / UI HELPERS
+     ============================================================ */
+
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function setError(input, box, message) {
+    if (input) {
+      input.classList.toggle('is-invalid', Boolean(message));
+    }
+
+    if (box) {
+      box.textContent = message || '';
+      box.classList.toggle('show', Boolean(message));
+    }
+  }
+
+  function clearErrors() {
+    [
+      loginEmail,
+      signupName,
+      signupEmail
+    ].forEach((input) => {
+      if (input) {
+        input.classList.remove('is-invalid');
+      }
+    });
+
+    [
+      loginEmailError,
+      signupNameError,
+      signupEmailError,
+      loginOtpError,
+      signupOtpError
+    ].forEach((box) => {
+      if (box) {
+        box.textContent = '';
+        box.classList.remove('show');
+      }
+    });
+  }
+
+  function setButtonLoading(button, loading, loadingText) {
+    if (!button) return;
+
+    if (loading) {
+      button.dataset.originalText = button.textContent;
+      button.textContent = loadingText;
+      button.disabled = true;
+    } else {
+      button.textContent =
+        button.dataset.originalText || button.textContent;
+      button.disabled = false;
+    }
+  }
+
+
+  /* ============================================================
+     TAB / STEP MANAGEMENT
+     ============================================================ */
+
+  function activateTab(mode) {
+    const loginActive = mode === 'login';
+
+    loginTab.classList.toggle('active', loginActive);
+    signupTab.classList.toggle('active', !loginActive);
+
+    loginTab.setAttribute(
+      'aria-selected',
+      String(loginActive)
+    );
+
+    signupTab.setAttribute(
+      'aria-selected',
+      String(!loginActive)
+    );
+
+    loginFlow.classList.toggle('d-none', !loginActive);
+    signupFlow.classList.toggle('d-none', loginActive);
+
+    clearErrors();
+
+    if (loginActive) {
+      loginEmail.focus();
+    } else {
+      signupName.focus();
+    }
+  }
+
+  function showLoginEmail() {
+    loginEmailStep.classList.add('active');
+    loginOtpStep.classList.remove('active');
+
+    clearOtpInputs(loginOtpInputs);
+
+    clearInterval(loginCountdownId);
+
+    loginResend.disabled = true;
+
+    loginEmail.focus();
+  }
+
+  function showLoginOtp() {
+    loginEmailStep.classList.remove('active');
+    loginOtpStep.classList.add('active');
+
+    clearOtpInputs(loginOtpInputs);
+
+    loginOtpInputs[0].focus();
+  }
+
+  function showSignupDetails() {
+    signupDetailsStep.classList.add('active');
+    signupOtpStep.classList.remove('active');
+
+    clearOtpInputs(signupOtpInputs);
+
+    clearInterval(signupCountdownId);
+
+    signupResend.disabled = true;
+
+    signupName.focus();
+  }
+
+  function showSignupOtp() {
+    signupDetailsStep.classList.remove('active');
+    signupOtpStep.classList.add('active');
+
+    clearOtpInputs(signupOtpInputs);
+
+    signupOtpInputs[0].focus();
+  }
+
+  function showAccount(user, message) {
+    loginFlow.classList.add('d-none');
+    signupFlow.classList.add('d-none');
+
+    document
+      .querySelector('.auth-tabs')
+      .classList.add('d-none');
+
+    accountStep.classList.add('active');
+
+    accountName.textContent =
+      user.full_name || user.name || '—';
+
+    accountEmail.textContent =
+      user.email || '—';
+
+    accountMessage.textContent =
+      message ||
+      'आपका अकाउंट सफलतापूर्वक सत्यापित हो गया है।';
+  }
+
+  function resetAuthUI() {
+    document
+      .querySelector('.auth-tabs')
+      .classList.remove('d-none');
+
+    accountStep.classList.remove('active');
+
+    activateTab('login');
+
+    showLoginEmail();
+    showSignupDetails();
+  }
+
+
+  /* ============================================================
+     OTP UI
+     ============================================================ */
+
+  function clearOtpInputs(inputs) {
+    inputs.forEach((input) => {
+      input.value = '';
+    });
+  }
+
+  function otpFrom(inputs) {
+    return inputs
+      .map((input) => input.value.trim())
+      .join('');
+  }
+
+  function wireOtpInputs(inputs) {
+    inputs.forEach((input, index) => {
+
+      input.addEventListener('input', () => {
+        input.value = input.value
+          .replace(/\D/g, '')
+          .slice(0, 1);
+
+        if (
+          input.value &&
+          index < inputs.length - 1
+        ) {
+          inputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('keydown', (event) => {
+
+        if (
+          event.key === 'Backspace' &&
+          !input.value &&
+          index > 0
+        ) {
+          inputs[index - 1].focus();
+        }
+
+        if (
+          event.key === 'ArrowLeft' &&
+          index > 0
+        ) {
+          inputs[index - 1].focus();
+        }
+
+        if (
+          event.key === 'ArrowRight' &&
+          index < inputs.length - 1
+        ) {
+          inputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('paste', (event) => {
+        event.preventDefault();
+
+        const digits =
+          (event.clipboardData.getData('text') || '')
+            .replace(/\D/g, '')
+            .slice(0, 6);
+
+        digits.split('').forEach((digit, i) => {
+          if (inputs[i]) {
+            inputs[i].value = digit;
+          }
+        });
+
+        const focusIndex =
+          Math.min(
+            digits.length,
+            inputs.length - 1
+          );
+
+        inputs[focusIndex].focus();
+      });
+    });
+  }
+
+  function startCountdown(timerEl, resendBtn, duration, onExpire) {
+    clearInterval(timerEl._timerId);
+
+    resendBtn.disabled = true;
+
+    const startedAt = Date.now();
+
+    const tick = () => {
+      const remaining = Math.max(
+        0,
+        duration - (Date.now() - startedAt)
+      );
+
+      const seconds = Math.ceil(
+        remaining / 1000
+      );
+
+      const minutes = Math.floor(
+        seconds / 60
+      );
+
+      const secs = seconds % 60;
+
+      timerEl.innerHTML =
+        `OTP समाप्त होने में <strong>` +
+        `${String(minutes).padStart(2, '0')}:` +
+        `${String(secs).padStart(2, '0')}` +
+        `</strong>`;
+
+      if (remaining <= 0) {
+        clearInterval(timerEl._timerId);
+
+        resendBtn.disabled = false;
+
+        timerEl.innerHTML =
+          'OTP की समय-सीमा समाप्त हो गई है। ' +
+          '<strong>नया OTP भेजें</strong>';
+
+        if (typeof onExpire === 'function') {
+          onExpire();
+        }
+      }
+    };
+
+    timerEl._timerId =
+      setInterval(tick, 250);
+
+    tick();
+  }
+
+
+  /* ============================================================
+     DEMO BOXES
+     ============================================================ */
+
+  function hideDemoBoxes() {
+    if (loginDemoBox) {
+      loginDemoBox.classList.add('d-none');
+      loginDemoBox.textContent = '';
+    }
+
+    if (signupDemoBox) {
+      signupDemoBox.classList.add('d-none');
+      signupDemoBox.textContent = '';
+    }
+  }
+
+
+  /* ============================================================
+     SIGNUP — REQUEST OTP
+     ============================================================ */
+
+  signupForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const name = signupName.value.trim();
+    const email = signupEmail.value.trim();
+
+    clearErrors();
+
+    let valid = true;
+
+    if (name.length < 2) {
+      setError(
+        signupName,
+        signupNameError,
+        'कृपया कम से कम 2 अक्षरों का नाम दर्ज करें।'
+      );
+
+      valid = false;
+    }
+
+    if (!isValidEmail(email)) {
+      setError(
+        signupEmail,
+        signupEmailError,
+        'कृपया मान्य ईमेल पता दर्ज करें।'
+      );
+
+      valid = false;
+    }
+
+    if (!valid) {
+      return;
+    }
+
+    const submitButton =
+      signupForm.querySelector('button[type="submit"]');
+
+    try {
+      setButtonLoading(
+        submitButton,
+        true,
+        'OTP भेजा जा रहा है...'
+      );
+
+      const data = await postAuthApi(
+        '/api/auth/signup/request-otp/',
+        {
+          email: email,
+          full_name: name
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'OTP भेजने में समस्या हुई।'
+        );
+      }
+
+      signupOtpEmail.textContent = email;
+
+      hideDemoBoxes();
+
+      showSignupOtp();
+
+      startCountdown(
+        signupTimer,
+        signupResend,
+        OTP_TTL
+      );
+
+    } catch (error) {
+      setError(
+        signupEmail,
+        signupEmailError,
+        error.message ||
+        'OTP भेजने में समस्या हुई।'
+      );
+    } finally {
+      setButtonLoading(
+        submitButton,
+        false
+      );
+    }
+  });
+
+
+  /* ============================================================
+     SIGNUP — VERIFY OTP
+     ============================================================ */
+
+  async function verifySignupOtp() {
+    const otp = otpFrom(signupOtpInputs);
+
+    signupOtpError.textContent = '';
+    signupOtpError.classList.remove('show');
+
+    if (!/^\d{6}$/.test(otp)) {
+      setError(
+        null,
+        signupOtpError,
+        'कृपया 6 अंकों का OTP दर्ज करें।'
+      );
+
+      return;
+    }
+
+    const email = signupEmail.value.trim();
+    const fullName = signupName.value.trim();
+
+    try {
+      setButtonLoading(
+        signupVerifyBtn,
+        true,
+        'सत्यापन हो रहा है...'
+      );
+
+      const data = await postAuthApi(
+        '/api/auth/signup/verify/',
+        {
+          email: email,
+          full_name: fullName,
+          otp: otp
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'OTP सत्यापन विफल हुआ।'
+        );
+      }
+
+      const authState =
+        await getCurrentUser();
+
+      if (!authState.authenticated) {
+        throw new Error(
+          'अकाउंट बन गया, लेकिन लॉगिन सत्र स्थापित नहीं हुआ।'
+        );
+      }
+
+      clearInterval(signupCountdownId);
+
+      showAccount(
+        authState.user,
+        'आपका नया अकाउंट सफलतापूर्वक बन गया है और आप लॉगिन हैं।'
+      );
+
+    } catch (error) {
+      signupOtpError.textContent =
+        error.message ||
+        'गलत OTP या OTP समाप्त हो गया है।';
+
+      signupOtpError.classList.add('show');
+
+    } finally {
+      setButtonLoading(
+        signupVerifyBtn,
+        false
+      );
+    }
+  }
+
+
+  /* ============================================================
+     LOGIN — REQUEST OTP
+     ============================================================ */
+
+  loginEmailForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = loginEmail.value.trim();
+
+    clearErrors();
+
+    if (!isValidEmail(email)) {
+      setError(
+        loginEmail,
+        loginEmailError,
+        'कृपया मान्य ईमेल पता दर्ज करें।'
+      );
+
+      loginEmail.focus();
+      return;
+    }
+
+    const submitButton =
+      loginEmailForm.querySelector('button[type="submit"]');
+
+    try {
+      setButtonLoading(
+        submitButton,
+        true,
+        'OTP भेजा जा रहा है...'
+      );
+
+      const data = await postAuthApi(
+        '/api/auth/login/request-otp/',
+        {
+          email: email
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'OTP भेजने में समस्या हुई।'
+        );
+      }
+
+      loginOtpEmail.textContent = email;
+
+      hideDemoBoxes();
+
+      showLoginOtp();
+
+      startCountdown(
+        loginTimer,
+        loginResend,
+        OTP_TTL
+      );
+
+    } catch (error) {
+      setError(
+        loginEmail,
+        loginEmailError,
+        error.message ||
+        'OTP भेजने में समस्या हुई।'
+      );
+    } finally {
+      setButtonLoading(
+        submitButton,
+        false
+      );
+    }
+  });
+
+
+  /* ============================================================
+     LOGIN — VERIFY OTP
+     ============================================================ */
+
+  async function verifyLoginOtp() {
+    const otp = otpFrom(loginOtpInputs);
+
+    loginOtpError.textContent = '';
+    loginOtpError.classList.remove('show');
+
+    if (!/^\d{6}$/.test(otp)) {
+      setError(
+        null,
+        loginOtpError,
+        'कृपया 6 अंकों का OTP दर्ज करें।'
+      );
+
+      return;
+    }
+
+    const email = loginEmail.value.trim();
+
+    try {
+      setButtonLoading(
+        loginVerifyBtn,
+        true,
+        'सत्यापन हो रहा है...'
+      );
+
+      const data = await postAuthApi(
+        '/api/auth/login/verify/',
+        {
+          email: email,
+          otp: otp
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'OTP सत्यापन विफल हुआ।'
+        );
+      }
+
+      const authState =
+        await getCurrentUser();
+
+      if (!authState.authenticated) {
+        throw new Error(
+          'लॉगिन सफल हुआ, लेकिन सत्र स्थापित नहीं हुआ।'
+        );
+      }
+
+      clearInterval(loginCountdownId);
+
+      showAccount(
+        authState.user,
+        'आपके ईमेल की पुष्टि हो गई है और आप सफलतापूर्वक लॉगिन हैं।'
+      );
+
+    } catch (error) {
+      loginOtpError.textContent =
+        error.message ||
+        'गलत OTP या OTP समाप्त हो गया है।';
+
+      loginOtpError.classList.add('show');
+
+    } finally {
+      setButtonLoading(
+        loginVerifyBtn,
+        false
+      );
+    }
+  }
+
+
+  /* ============================================================
+     RESEND
+     ============================================================ */
+
+  async function resendSignupOtp() {
+    const name = signupName.value.trim();
+    const email = signupEmail.value.trim();
+
+    if (!isValidEmail(email) || name.length < 2) {
+      showSignupDetails();
+      return;
+    }
+
+    signupResend.disabled = true;
+
+    try {
+      const data = await postAuthApi(
+        '/api/auth/signup/request-otp/',
+        {
+          email: email,
+          full_name: name
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'OTP दोबारा भेजने में समस्या हुई।'
+        );
+      }
+
+      signupOtpEmail.textContent = email;
+
+      clearOtpInputs(signupOtpInputs);
+
+      startCountdown(
+        signupTimer,
+        signupResend,
+        OTP_TTL
+      );
+
+      signupOtpInputs[0].focus();
+
+    } catch (error) {
+      signupOtpError.textContent =
+        error.message ||
+        'OTP दोबारा भेजने में समस्या हुई।';
+
+      signupOtpError.classList.add('show');
+
+      signupResend.disabled = false;
+    }
+  }
+
+  async function resendLoginOtp() {
+    const email = loginEmail.value.trim();
+
+    if (!isValidEmail(email)) {
+      showLoginEmail();
+      return;
+    }
+
+    loginResend.disabled = true;
+
+    try {
+      const data = await postAuthApi(
+        '/api/auth/login/request-otp/',
+        {
+          email: email
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'OTP दोबारा भेजने में समस्या हुई।'
+        );
+      }
+
+      loginOtpEmail.textContent = email;
+
+      clearOtpInputs(loginOtpInputs);
+
+      startCountdown(
+        loginTimer,
+        loginResend,
+        OTP_TTL
+      );
+
+      loginOtpInputs[0].focus();
+
+    } catch (error) {
+      loginOtpError.textContent =
+        error.message ||
+        'OTP दोबारा भेजने में समस्या हुई।';
+
+      loginOtpError.classList.add('show');
+
+      loginResend.disabled = false;
+    }
+  }
+
+
+  /* ============================================================
+     LOGOUT
+     ============================================================ */
+
+  async function logout() {
+    try {
+      const data =
+        await postAuthApi(
+          '/api/auth/logout/',
+          {}
+        );
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          'लॉगआउट नहीं हो सका।'
+        );
+      }
+
+      clearInterval(loginCountdownId);
+      clearInterval(signupCountdownId);
+
+      clearOtpInputs(loginOtpInputs);
+      clearOtpInputs(signupOtpInputs);
+
+      resetAuthUI();
+
+    } catch (error) {
+      console.error(
+        'Logout failed:',
+        error
+      );
+    }
+  }
+
+
+  /* ============================================================
+     EVENT LISTENERS
+     ============================================================ */
+
+  loginVerifyBtn.addEventListener(
+    'click',
+    verifyLoginOtp
+  );
+
+  signupVerifyBtn.addEventListener(
+    'click',
+    verifySignupOtp
+  );
+
+  loginChangeEmail.addEventListener(
+    'click',
+    showLoginEmail
+  );
+
+  signupChangeEmail.addEventListener(
+    'click',
+    showSignupDetails
+  );
+
+  loginResend.addEventListener(
+    'click',
+    resendLoginOtp
+  );
+
+  signupResend.addEventListener(
+    'click',
+    resendSignupOtp
+  );
+
+  logoutBtn.addEventListener(
+    'click',
+    logout
+  );
+
+  loginTab.addEventListener(
+    'click',
+    () => activateTab('login')
+  );
+
+  signupTab.addEventListener(
+    'click',
+    () => activateTab('signup')
+  );
+
+  wireOtpInputs(loginOtpInputs);
+  wireOtpInputs(signupOtpInputs);
+
+
+  /* ============================================================
+     INITIAL AUTH STATE
+     ============================================================ */
+
+  async function initializeAuth() {
+    hideDemoBoxes();
+
+    try {
+      const authState =
+        await getCurrentUser();
+
+      if (
+        authState.authenticated &&
+        authState.user
+      ) {
+        showAccount(
+          authState.user,
+          'आप पहले से लॉगिन हैं।'
+        );
+
+        return;
+      }
+
+    } catch (error) {
+      console.warn(
+        'Unable to check current authentication state:',
+        error
+      );
+    }
+
+    activateTab('login');
+    showLoginEmail();
+    showSignupDetails();
+  }
+
+  initializeAuth();
+
+})();
+</script>
+
+{% endblock %}

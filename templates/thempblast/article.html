@@ -1,0 +1,695 @@
+{% extends "thempblast/base.html" %}
+
+{% block content %}
+
+<style>
+    /* Share bar */
+    .share-bar a,
+    .share-bar button {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--mpb-border-gray);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mpb-dark-gray);
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .share-bar a:hover,
+    .share-bar button:hover {
+      background: var(--mpb-black);
+      color: #fff;
+      border-color: var(--mpb-black);
+    }
+
+    /* Toast */
+    .mpb-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--mpb-black);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mpb-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================================
+   ARTICLE PAGE — additions only (reuses all tokens/components above)
+   ============================================================ */
+    .breadcrumb-bar {
+      font-size: 12.5px;
+      color: var(--mpb-mid-gray);
+      padding: var(--space-3) 0;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .breadcrumb-bar a {
+      color: var(--mpb-mid-gray);
+    }
+
+    .breadcrumb-bar a:hover {
+      color: var(--mpb-red);
+    }
+
+    .breadcrumb-bar .sep {
+      margin: 0 6px;
+      color: var(--mpb-border-gray);
+    }
+
+    .breadcrumb-bar .current {
+      color: var(--mpb-dark-gray);
+      font-weight: 600;
+    }
+
+    .article-shell {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .article-reading-col {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--mpb-mid-gray);
+      background: var(--mpb-light-gray);
+      border: 1px solid var(--mpb-border-gray);
+      padding: 3px 9px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .article-headline {
+      font-size: 23px;
+      line-height: 1.32;
+      margin: var(--space-3) 0 var(--space-2);
+    }
+
+    @media (min-width:768px) {
+      .article-headline {
+        font-size: 32px;
+      }
+    }
+
+    .article-subheadline {
+      font-size: 15px;
+      color: var(--mpb-dark-gray);
+      line-height: 1.55;
+      margin-bottom: var(--space-3);
+    }
+
+    @media (min-width:768px) {
+      .article-subheadline {
+        font-size: 17px;
+      }
+    }
+
+    .article-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 14px;
+      font-size: 12.5px;
+      color: var(--mpb-mid-gray);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--mpb-border-gray);
+      margin-bottom: var(--space-4);
+    }
+
+    .article-meta-row .author {
+      font-weight: 700;
+      color: var(--mpb-dark-gray);
+    }
+
+    .article-meta-row .divider {
+      color: var(--mpb-border-gray);
+    }
+
+    .article-featured-img {
+      width: 100%;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: var(--mpb-light-gray);
+    }
+
+    .article-featured-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .article-img-caption {
+      font-size: 12.5px;
+      color: var(--mpb-mid-gray);
+      padding-left: 10px;
+      border-left: 3px solid var(--mpb-red);
+      margin: 6px 0 var(--space-5);
+      line-height: 1.5;
+    }
+
+    .article-body {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--mpb-black);
+    }
+
+    .article-body p {
+      margin-bottom: var(--space-4);
+    }
+
+    .article-body h2 {
+      font-size: 18px;
+      margin: var(--space-5) 0 var(--space-3);
+      font-family: var(--font-head);
+      font-weight: 700;
+    }
+
+    .article-body blockquote {
+      border-left: 4px solid var(--mpb-red);
+      background: var(--mpb-light-gray);
+      padding: var(--space-3) var(--space-4);
+      margin: var(--space-4) 0;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 15.5px;
+      color: var(--mpb-dark-gray);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .article-body ul {
+      margin: 0 0 var(--space-4);
+      padding-left: 22px;
+    }
+
+    .article-body ul li {
+      margin-bottom: 7px;
+    }
+
+    .article-inline-img {
+      width: 100%;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: var(--mpb-light-gray);
+      margin: var(--space-2) 0 var(--space-1);
+    }
+
+    .article-inline-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .article-video-block {
+      background: var(--mpb-light-gray);
+      border: 1px solid var(--mpb-border-gray);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      margin: var(--space-4) 0;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .article-video-block .thumb {
+      flex: 0 0 120px;
+      width: 120px;
+      aspect-ratio: 16/9;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      background: #111;
+    }
+
+    .article-video-block .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .85;
+    }
+
+    .article-video-block .thumb i {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 26px;
+    }
+
+    .article-video-block .duration {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0, 0, 0, .75);
+      color: #fff;
+      font-size: 10.5px;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .article-video-block .video-title {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .article-video-block .video-sub {
+      font-size: 12px;
+      color: var(--mpb-mid-gray);
+      margin-top: 2px;
+    }
+
+    @media (min-width:768px) {
+      .article-video-block .thumb {
+        flex-basis: 180px;
+        width: 180px;
+      }
+    }
+
+    .article-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: var(--space-4) 0;
+      border-top: 1px solid var(--mpb-border-gray);
+      border-bottom: 1px solid var(--mpb-border-gray);
+      margin: var(--space-5) 0;
+    }
+
+    .action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--mpb-border-gray);
+      background: #fff;
+      color: var(--mpb-dark-gray);
+      font-weight: 600;
+      font-size: 13.5px;
+      padding: 9px 16px;
+      border-radius: 24px;
+      min-height: 44px;
+      transition: .15s ease;
+    }
+
+    .action-btn i {
+      font-size: 16px;
+    }
+
+    .action-btn.liked {
+      background: var(--mpb-red);
+      border-color: var(--mpb-red);
+      color: #fff;
+    }
+
+    .action-btn.saved {
+      background: var(--mpb-black);
+      border-color: var(--mpb-black);
+      color: #fff;
+    }
+
+    .action-btn:hover {
+      border-color: var(--mpb-black);
+    }
+
+    .views-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--mpb-mid-gray);
+      font-weight: 600;
+      padding: 9px 4px;
+    }
+
+    .article-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: var(--space-6);
+    }
+
+    .tag-pill {
+      border: 1px solid var(--mpb-border-gray);
+      background: var(--mpb-light-gray);
+      color: var(--mpb-dark-gray);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 16px;
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .tag-pill:hover {
+      border-color: var(--mpb-red);
+      color: var(--mpb-red);
+    }
+
+    .mostread-rank {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--mpb-border-gray);
+      flex: 0 0 24px;
+      width: 24px;
+      text-align: center;
+      -webkit-text-stroke: 1px var(--mpb-mid-gray);
+    }
+
+    .mostread-rank.top {
+      color: var(--mpb-red);
+      -webkit-text-stroke: 0;
+    }
+
+    .share-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Video modal (mock playback area) */
+    .mock-video-stage {
+      aspect-ratio: 16/9;
+      background: #0c0c0c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      gap: 8px;
+    }
+
+    .mock-video-stage i {
+      font-size: 48px;
+      opacity: .85;
+    }
+
+    .mock-video-stage .mv-label {
+      font-size: 13px;
+      color: #bbb;
+    }
+</style>
+
+<div class="container-fluid px-page article-shell py-4">
+
+      <!-- =============== BREADCRUMB =============== -->
+      <nav class="breadcrumb-bar" aria-label="ब्रेडक्रम्ब">
+        <a href="index.html">होम</a>
+        <span class="sep">/</span>
+        <a href="index.html#mp-news" id="breadcrumbCategory">मध्य प्रदेश</a>
+        <span class="sep">/</span>
+        <span class="current" id="breadcrumbCurrent">इंदौर मेट्रो रेल परियोजना अपडेट</span>
+      </nav>
+
+      <div class="article-reading-col">
+        <!-- =============== CATEGORY + DEMO BADGE =============== -->
+        <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+          <span class="badge-cat cat-mp" id="articleCategoryBadge">मध्य प्रदेश</span>
+          <span class="demo-badge"><i class="bi bi-info-circle"></i> डेमो कंटेंट</span>
+        </div>
+
+        <!-- =============== HEADLINE + SUBHEADLINE =============== -->
+        <h1 class="article-headline" id="articleHeadline"></h1>
+        <p class="article-subheadline" id="articleSubheadline"></p>
+
+        <!-- =============== META: author / published / updated / location =============== -->
+        <div class="article-meta-row" id="articleMetaRow"></div>
+
+        <!-- =============== FEATURED IMAGE =============== -->
+        <figure class="mb-0">
+          <div class="article-featured-img">
+            <img id="articleFeaturedImg" src="" alt="">
+          </div>
+          <figcaption class="article-img-caption" id="articleImgCaption"></figcaption>
+        </figure>
+
+        <!-- =============== ARTICLE CONTENT =============== -->
+        <div class="article-body" id="articleContentBody"></div>
+
+        <!-- =============== ACTIONS: like / views / save / share =============== -->
+        <div class="article-actions">
+          <div class="share-bar" role="group" aria-label="शेयर करें">
+            <button type="button" id="shareFacebook" aria-label="फेसबुक पर शेयर करें"><i
+                class="bi bi-facebook"></i></button>
+            <button type="button" id="shareTwitter" aria-label="X पर शेयर करें"><i class="bi bi-twitter-x"></i></button>
+            <button type="button" id="shareCopy" aria-label="लिंक कॉपी करें"><i class="bi bi-link-45deg"></i></button>
+          </div>
+        </div>
+
+
+      </div>
+
+
+<!-- Toast -->
+  <div class="mpb-toast" id="mpbToast"><i class="bi bi-check-circle-fill"></i><span id="mpbToastMsg">लिंक कॉपी हो
+      गया</span></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    /* Prevent placeholder href="#" links (features/pages not yet built) from
+       jumping the page to top. Real navigation/anchor links are unaffected. */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href="#"]');
+      if (a) e.preventDefault();
+    });
+  </script>
+
+  <script>
+    /* ============================================================
+       THE MP BLAST — Article Page
+       Clean article-page logic: no unused related-news, likes,
+       saves, tags, video modal, or sidebar dependencies.
+       ============================================================ */
+
+    function img(seed, w, h) {
+      return `https://picsum.photos/seed/${seed}/${w || 900}/${h || 500}`;
+    }
+
+    const ARTICLE = {
+      category: "mp",
+      catLabel: "मध्य प्रदेश",
+      location: "इंदौर, मध्य प्रदेश",
+      headline: "इंदौर में मेट्रो रेल परियोजना के दूसरे चरण को लेकर बड़ा अपडेट",
+      subheadline: "शहर के प्रमुख क्षेत्रों को जोड़ने वाली मेट्रो परियोजना के दूसरे चरण के निर्माण कार्य में तेजी की जानकारी सामने आई है।",
+      author: "THE MP BLAST रिपोर्टर",
+      publishedAt: "आज, 10:30 AM",
+      updatedAt: "आज, 11:15 AM",
+      featuredImage: img("article-indore-metro", 1200, 675),
+      caption: "इंदौर मेट्रो लाइन का निर्माण कार्य — प्रतीकात्मक तस्वीर (डेमो)",
+      tags: ["इंदौर", "मध्य प्रदेश", "मेट्रो रेल", "इंफ्रास्ट्रक्चर"]
+    };
+
+    const ARTICLE_CONTENT_HTML = `
+  <p><strong>इंदौर:</strong> शहर में मेट्रो रेल परियोजना के दूसरे चरण को लेकर निर्माण गतिविधियों में तेजी की जानकारी सामने आई है। इस चरण का उद्देश्य शहर के प्रमुख व्यावसायिक, आवासीय और आवागमन वाले क्षेत्रों के बीच कनेक्टिविटी को बेहतर बनाना है। परियोजना से जुड़े अधिकारियों के अनुसार, निर्माण कार्य को तय समय-सीमा में आगे बढ़ाने के लिए अलग-अलग हिस्सों में काम किया जा रहा है।</p>
+
+  <p>पहले चरण में शुरू हुई मेट्रो सेवा के बाद दूसरे चरण को शहर के सार्वजनिक परिवहन नेटवर्क के विस्तार की दिशा में महत्वपूर्ण कदम माना जा रहा है। इसके पूरा होने पर उन यात्रियों को विशेष सुविधा मिलने की उम्मीद है, जिन्हें रोजाना लंबी दूरी तय करने के लिए सड़क परिवहन पर निर्भर रहना पड़ता है।</p>
+
+  <blockquote>“निर्माण कार्य में गुणवत्ता और सुरक्षा को प्राथमिकता देते हुए समयबद्ध तरीके से परियोजना को आगे बढ़ाना हमारा प्रमुख लक्ष्य है।” — परियोजना प्रबंधक (डेमो कथन)</blockquote>
+
+  <h2>दूसरे चरण में क्या बदलेगा?</h2>
+  <p>दूसरे चरण में मेट्रो नेटवर्क को शहर के उन हिस्सों तक विस्तार देने पर फोकस किया जा रहा है, जहां रोजाना बड़ी संख्या में लोग काम, शिक्षा और अन्य जरूरी गतिविधियों के लिए आते-जाते हैं। बेहतर कनेक्टिविटी से प्रमुख मार्गों पर सार्वजनिक परिवहन की पहुंच बढ़ाने और यात्रियों के सफर को अधिक व्यवस्थित बनाने में मदद मिलने की उम्मीद है।</p>
+
+  <div class="article-inline-img">
+    <img src="__INLINE_IMG__" alt="इंदौर मेट्रो परियोजना के निर्माण कार्य की प्रतीकात्मक तस्वीर" loading="lazy">
+  </div>
+  <p class="article-img-caption" style="margin-top:6px;">मेट्रो निर्माण कार्य की प्रतीकात्मक तस्वीर — THE MP BLAST डेमो कंटेंट</p>
+
+  <h2>यात्रियों को क्या फायदा मिलने की उम्मीद?</h2>
+  <p>मेट्रो नेटवर्क के विस्तार का सबसे बड़ा संभावित लाभ तेज और व्यवस्थित सार्वजनिक परिवहन के रूप में देखा जा रहा है। नियमित यात्रियों के लिए यात्रा के समय में कमी, प्रमुख क्षेत्रों तक आसान पहुंच और सड़क यातायात पर निर्भरता कम होना इसके प्रमुख संभावित फायदे हो सकते हैं।</p>
+
+  <ul>
+    <li>शहर के प्रमुख क्षेत्रों के बीच सार्वजनिक परिवहन कनेक्टिविटी बेहतर होने की उम्मीद।</li>
+    <li>दैनिक यात्रियों के लिए अधिक व्यवस्थित और सुविधाजनक आवागमन विकल्प।</li>
+    <li>व्यस्त सड़क मार्गों पर यातायात दबाव कम करने में मदद मिलने की संभावना।</li>
+    <li>भविष्य में शहर के सार्वजनिक परिवहन नेटवर्क के और विस्तार का आधार तैयार होना।</li>
+  </ul>
+
+  <h2>निर्माण के दौरान यातायात पर असर</h2>
+  <p>मेट्रो जैसे बड़े इंफ्रास्ट्रक्चर प्रोजेक्ट के निर्माण के दौरान कुछ मार्गों पर अस्थायी डायवर्जन, बैरिकेडिंग या यातायात व्यवस्था में बदलाव की आवश्यकता हो सकती है। प्रशासन की ओर से यात्रियों से अपील की गई है कि वे निर्माण क्षेत्रों के आसपास लगाए गए संकेतों और स्थानीय यातायात निर्देशों का पालन करें तथा जरूरत पड़ने पर वैकल्पिक मार्गों का इस्तेमाल करें।</p>
+
+  <h2>परियोजना की निगरानी और आगे की तैयारी</h2>
+  <p>निर्माण की गुणवत्ता, सुरक्षा और प्रगति पर लगातार निगरानी रखने के लिए संबंधित टीमों के बीच समन्वय जरूरी है। परियोजना के अलग-अलग हिस्सों में काम की स्थिति की समीक्षा करते हुए आने वाली चुनौतियों को समय पर दूर करने पर जोर दिया जा रहा है। यात्रियों के लिए अंतिम सुविधा तभी सुनिश्चित होगी जब निर्माण, सुरक्षा और संचालन से जुड़े सभी चरण निर्धारित मानकों के अनुसार पूरे हों।</p>
+
+  <p>फिलहाल यह जानकारी <strong>डेमो न्यूज़ कंटेंट</strong> के रूप में प्रस्तुत की जा रही है। वास्तविक समाचार प्रकाशित करते समय परियोजना की आधिकारिक प्रगति, स्वीकृत रूट, समय-सीमा, यातायात डायवर्जन और प्रशासनिक बयानों को संबंधित आधिकारिक स्रोतों से सत्यापित किया जाना चाहिए।</p>
+`;
+
+    function renderArticle() {
+      document.title = `${ARTICLE.headline} | THE MP BLAST`;
+
+      const categoryLink = document.getElementById('breadcrumbCategory');
+      if (categoryLink) {
+        categoryLink.textContent = ARTICLE.catLabel;
+        categoryLink.href = 'index.html#mp-news';
+      }
+
+      const current = document.getElementById('breadcrumbCurrent');
+      if (current) current.textContent = ARTICLE.headline;
+
+      const badge = document.getElementById('articleCategoryBadge');
+      if (badge) badge.textContent = ARTICLE.catLabel;
+
+      const headline = document.getElementById('articleHeadline');
+      if (headline) headline.textContent = ARTICLE.headline;
+
+      const subheadline = document.getElementById('articleSubheadline');
+      if (subheadline) subheadline.textContent = ARTICLE.subheadline;
+
+      const meta = document.getElementById('articleMetaRow');
+      if (meta) {
+        meta.innerHTML = `
+      <span class="author"><i class="bi bi-person-circle me-1"></i>${ARTICLE.author}</span>
+      <span class="divider">|</span>
+      <span><i class="bi bi-geo-alt me-1"></i>${ARTICLE.location}</span>
+      <span class="divider">|</span>
+      <span><i class="bi bi-clock me-1"></i>प्रकाशित: ${ARTICLE.publishedAt}</span>
+      <span class="divider">|</span>
+      <span><i class="bi bi-arrow-repeat me-1"></i>अपडेटेड: ${ARTICLE.updatedAt}</span>
+    `;
+      }
+
+      const featured = document.getElementById('articleFeaturedImg');
+      if (featured) {
+        featured.src = ARTICLE.featuredImage;
+        featured.alt = ARTICLE.headline;
+      }
+
+      const caption = document.getElementById('articleImgCaption');
+      if (caption) caption.textContent = ARTICLE.caption;
+
+      const body = document.getElementById('articleContentBody');
+      if (body) {
+        body.innerHTML = ARTICLE_CONTENT_HTML.replace('__INLINE_IMG__', img('article-inline-site', 900, 500));
+      }
+    }
+
+    function renderTicker() {
+      const track = document.getElementById('tickerTrack');
+      if (!track) return;
+
+      const headlines = [
+        'इंदौर मेट्रो परियोजना के दूसरे चरण में निर्माण कार्य तेज',
+        'शहर में सार्वजनिक परिवहन नेटवर्क विस्तार पर फोकस',
+        'निर्माण क्षेत्रों में यातायात निर्देशों का पालन करने की अपील'
+      ];
+
+      const items = headlines.map(text => `<a href="index.html#mp-news">${text}</a>`).join('<span aria-hidden="true" style="opacity:.6;">●</span>');
+      track.innerHTML = items + '<span aria-hidden="true" style="opacity:.6;">●</span>' + items;
+
+      const closeBtn = document.getElementById('tickerClose');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          const wrap = document.getElementById('tickerWrap');
+          if (wrap) wrap.style.display = 'none';
+        });
+      }
+    }
+
+    function setTodayDate() {
+      const el = document.getElementById('todayDate');
+      if (!el) return;
+      const days = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
+      const months = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+      const d = new Date();
+      el.textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function initShare() {
+      const copyBtn = document.getElementById('shareCopy');
+      const facebookBtn = document.getElementById('shareFacebook');
+      const twitterBtn = document.getElementById('shareTwitter');
+
+      if (facebookBtn) {
+        facebookBtn.addEventListener('click', () => {
+          const url = encodeURIComponent(window.location.href);
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,width=600,height=500');
+        });
+      }
+
+      if (twitterBtn) {
+        twitterBtn.addEventListener('click', () => {
+          const url = encodeURIComponent(window.location.href);
+          const text = encodeURIComponent(ARTICLE.headline);
+          window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'noopener,width=600,height=500');
+        });
+      }
+
+      if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            showToast('लिंक कॉपी हो गया');
+          } catch (e) {
+            showToast('लिंक कॉपी नहीं हो सका');
+          }
+        });
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('mpbToast');
+      const msg = document.getElementById('mpbToastMsg');
+      if (!toast || !msg) return;
+      msg.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window._mpbToastTimer);
+      window._mpbToastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function initBackToTop() {
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
+      window.addEventListener('scroll', () => btn.classList.toggle('show', window.scrollY > 500));
+      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTodayDate();
+      renderTicker();
+      renderArticle();
+      initShare();
+      initBackToTop();
+    });
+  </script>
+{% endblock %}

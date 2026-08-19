@@ -1,0 +1,354 @@
+{% extends "thempblast/base.html" %}
+
+{% block content %}
+
+<style>
+/* ============================================================
+   STATIC PAGES (About / Contact) — additions only, reuses tokens above
+   ============================================================ */
+    .static-page-shell {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .static-reading-col {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .static-page-title {
+      font-size: 26px;
+      margin-top: var(--space-2);
+    }
+
+    @media (min-width:768px) {
+      .static-page-title {
+        font-size: 32px;
+      }
+    }
+
+    .static-page-lead {
+      font-size: 15.5px;
+      color: var(--mpb-mid-gray);
+      margin-bottom: var(--space-5);
+    }
+
+    .static-section {
+      margin-bottom: var(--space-5);
+    }
+
+    .static-section h2 {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: var(--space-2);
+    }
+
+    .static-section p {
+      font-size: 15.5px;
+      line-height: 1.8;
+      color: var(--mpb-black);
+      margin-bottom: var(--space-3);
+    }
+
+    .static-section ul {
+      padding-left: 22px;
+      margin-bottom: var(--space-3);
+    }
+
+    .static-section ul li {
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 6px;
+    }
+
+    .static-note {
+      background: var(--mpb-light-gray);
+      border: 1px dashed var(--mpb-border-gray);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--mpb-mid-gray);
+    }
+
+    /* Contact form */
+    .contact-card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid var(--mpb-border-gray);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+    }
+
+    .contact-card .form-label {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--mpb-dark-gray);
+    }
+
+    .contact-card .form-control {
+      min-height: 44px;
+      border-radius: 6px;
+      border-color: var(--mpb-border-gray);
+      font-size: 14.5px;
+    }
+
+    .contact-card textarea.form-control {
+      min-height: 120px;
+    }
+
+    .contact-card .form-control:focus {
+      border-color: var(--mpb-red);
+      box-shadow: 0 0 0 3px rgba(227, 30, 36, .12);
+    }
+
+    .form-feedback {
+      font-size: 12.5px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .form-feedback.error {
+      color: var(--mpb-red);
+    }
+
+    .form-feedback.show {
+      display: block;
+    }
+
+    .is-invalid~.form-feedback.error {
+      display: block;
+    }
+
+    .verify-step {
+      text-align: center;
+      padding: var(--space-2) 0;
+    }
+
+    .otp-input-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: var(--space-3) 0;
+    }
+
+    .otp-digit {
+      width: 44px;
+      height: 52px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      border: 1.5px solid var(--mpb-border-gray);
+      border-radius: 8px;
+    }
+
+    .otp-digit:focus {
+      border-color: var(--mpb-red);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(227, 30, 36, .12);
+    }
+
+    .demo-otp-banner {
+      background: #fff8e1;
+      border: 1px solid #f0d878;
+      color: #7a5c00;
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: var(--space-3);
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .verified-banner {
+      background: #e9f7ef;
+      border: 1px solid #a7d7bb;
+      color: #1a5e3a;
+      font-size: 13.5px;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .otp-timer {
+      font-size: 12.5px;
+      color: var(--mpb-mid-gray);
+      margin-top: 6px;
+    }
+
+    .otp-resend-btn:disabled {
+      opacity: .5;
+      pointer-events: none;
+    }
+
+
+    .mobile-district-chip {
+      border: 1px solid var(--mpb-border-gray);
+      border-radius: 20px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--mpb-dark-gray);
+      background: #fff;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .legal-section {
+      scroll-margin-top: calc(var(--header-h) + 16px);
+    }
+</style>
+
+<div class="container-fluid px-page static-page-shell py-4">
+      <nav aria-label="ब्रेडक्रम्ब" class="breadcrumb-bar">
+        <a href="index.html">होम</a>
+        <span class="sep">/</span>
+        <span class="current">हमारे बारे में</span>
+      </nav>
+      <div class="static-reading-col">
+        <h1 class="static-page-title">हमारे बारे में</h1>
+        <p class="static-page-lead">THE MP BLAST — मध्य प्रदेश की हर खबर पर हमारी नजर।</p>
+        <section class="static-section">
+          <h2>परिचय</h2>
+          <p>THE MP BLAST मध्य प्रदेश-केंद्रित एक डिजिटल न्यूज़ पोर्टल है, जिसका उद्देश्य राज्य के हर ज़िले की खबर को
+            तेज़, सटीक और निष्पक्ष तरीके से पाठकों तक पहुँचाना है। हम राजनीति, अपराध, शिक्षा व रोज़गार, व्यापार, खेल और
+            मनोरंजन सहित हर क्षेत्र की खबरों को एक ही मंच पर लाने का प्रयास करते हैं।</p>
+        </section>
+        <section class="static-section">
+          <h2>हमारा उद्देश्य</h2>
+          <p>हमारा मानना है कि स्थानीय खबरें उतनी ही महत्वपूर्ण हैं जितनी राष्ट्रीय खबरें। मध्य प्रदेश के हर ज़िले —
+            इंदौर, भोपाल, उज्जैन, ग्वालियर, जबलपुर सहित सभी क्षेत्रों — की खबरें अक्सर बड़े मंचों पर वह जगह नहीं पातीं
+            जिनकी वे हकदार हैं। THE MP BLAST इसी कमी को पूरा करने के लिए बनाया गया है, ताकि हर पाठक को उसके क्षेत्र से
+            जुड़ी खबर आसानी से मिल सके।</p>
+        </section>
+        <section class="static-section">
+          <h2>हमारा प्लेटफ़ॉर्म</h2>
+          <p>THE MP BLAST पर पाठकों को मिलती हैं:</p>
+          <ul>
+            <li>ज़िलेवार मध्य प्रदेश समाचार</li>
+            <li>राष्ट्रीय स्तर की महत्वपूर्ण खबरें</li>
+            <li>राजनीति, अपराध, शिक्षा व रोज़गार, व्यापार, खेल और मनोरंजन जैसी श्रेणियाँ</li>
+            <li>वीडियो और फोटो के माध्यम से खबरें</li>
+            <li>पाठकों की भागीदारी के लिए "खबर भेजें" जैसी सुविधाएं</li>
+          </ul>
+          <p>प्लेटफ़ॉर्म को मोबाइल-फर्स्ट सोच के साथ तैयार किया गया है, ताकि पाठक किसी भी डिवाइस पर आसानी से खबरें पढ़
+            सकें।</p>
+        </section>
+        <section class="static-section">
+          <h2>टीम / संस्थापक</h2>
+          <p>THE MP BLAST की स्थापना एक स्वतंत्र, स्थानीय-केंद्रित डिजिटल न्यूज़रूम बनाने के विचार के साथ की गई है।</p>
+          <!-- NOTE for Aashu: Replace this placeholder paragraph with the real founder/team bio and details before launch. -->
+          <p class="static-note">
+            <i class="bi bi-info-circle me-1"></i>
+            संस्थापक/टीम का विस्तृत परिचय जल्द जोड़ा जाएगा।
+          </p>
+        </section>
+        <section class="static-section">
+          <h2>संपर्क</h2>
+          <p>किसी भी सुझाव, फीडबैक या सहयोग के लिए हमसे <a href="contact.html">संपर्क पेज</a> के माध्यम से जुड़ें।</p>
+        </section>
+      </div>
+
+      <section class="static-section legal-section" id="privacy-policy">
+        <h2>गोपनीयता नीति</h2>
+        <p>THE MP BLAST पाठकों की गोपनीयता का सम्मान करता है। वेबसाइट पर उपलब्ध सामग्री पढ़ने के लिए सामान्यतः व्यक्तिगत
+          जानकारी देना आवश्यक नहीं है। यदि आप संपर्क, सुझाव या खबर भेजने जैसी सुविधाओं के माध्यम से अपनी जानकारी साझा
+          करते हैं, तो उसका उपयोग केवल संबंधित अनुरोध को समझने और आवश्यक जवाब देने के लिए किया जाएगा।</p>
+        <p>हम किसी भी व्यक्तिगत जानकारी को अनावश्यक रूप से सार्वजनिक नहीं करते। वेबसाइट की सेवाओं, सुरक्षा और उपयोगकर्ता
+          अनुभव को बेहतर बनाने के लिए आवश्यक तकनीकी जानकारी का उपयोग किया जा सकता है।</p>
+      </section>
+
+      <section class="static-section legal-section" id="terms-conditions">
+        <h2>नियम व शर्तें</h2>
+        <p>THE MP BLAST का उपयोग करते समय पाठकों से अपेक्षा की जाती है कि वे वेबसाइट की सामग्री का जिम्मेदारीपूर्वक
+          उपयोग करें। वेबसाइट पर प्रकाशित समाचार, लेख, फोटो और अन्य सामग्री केवल सामान्य सूचना और समाचार उद्देश्य के लिए
+          उपलब्ध कराई जाती है।</p>
+        <p>वेबसाइट की सामग्री को बिना अनुमति व्यावसायिक रूप से पुनः प्रकाशित, कॉपी या वितरित नहीं किया जाना चाहिए। किसी
+          लिंक या तीसरे पक्ष की सेवा के उपयोग से होने वाली गतिविधियों के लिए संबंधित सेवा की अपनी शर्तें लागू हो सकती
+          हैं।</p>
+      </section>
+
+      <section class="static-section legal-section" id="disclaimer">
+        <h2>डिस्क्लेमर</h2>
+        <p>THE MP BLAST समाचारों को उपलब्ध स्रोतों और प्राप्त जानकारी के आधार पर सटीक एवं निष्पक्ष रूप से प्रस्तुत करने
+          का प्रयास करता है। फिर भी परिस्थितियों, स्रोतों या उपलब्ध जानकारी में बदलाव के कारण किसी सामग्री में त्रुटि या
+          अपूर्णता संभव है।</p>
+        <p>किसी समाचार या जानकारी के आधार पर लिया गया निर्णय पाठक की अपनी जिम्मेदारी है। महत्वपूर्ण मामलों में पाठकों को
+          संबंधित आधिकारिक स्रोतों से जानकारी की पुष्टि करनी चाहिए।</p>
+      </section>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href="#"]');
+      if (a) e.preventDefault();
+    });
+
+    const DISTRICTS = ["इंदौर", "भोपाल", "उज्जैन", "धार", "देवास", "रतलाम", "खरगोन", "खंडवा", "मंदसौर", "नीमच", "झाबुआ", "ग्वालियर", "जबलपुर", "सागर", "रीवा", "सतना"];
+
+    function renderDistrictQuickNav() {
+      const nav = document.getElementById('districtQuickNav');
+      if (nav) {
+        nav.innerHTML = DISTRICTS.slice(0, 8).map(d =>
+          `<a href="index.html#mp-news" class="text-white-50 small text-decoration-none">${d}</a>`).join('');
+      }
+      const mobileChips = document.getElementById('mobileDistrictChips');
+      if (mobileChips) {
+        mobileChips.innerHTML = DISTRICTS.slice(0, 10).map(d =>
+          `<a href="index.html#mp-news" class="mobile-district-chip" style="text-decoration:none;">${d}</a>`).join('');
+      }
+    }
+
+    function renderTicker() {
+      const items = [
+        "इंदौर में मेट्रो रेल परियोजना का दूसरा चरण शुरू",
+        "भोपाल में नई आईटी पार्क योजना को मिली मंजूरी",
+        "मध्य प्रदेश विधानसभा का मानसून सत्र अगले सप्ताह से"
+      ];
+      const track = document.getElementById('tickerTrack');
+      if (track) {
+        const sep = '<span aria-hidden="true" style="opacity:.6;">●</span>';
+        const html = items.map(t => `<a href="index.html">${t}</a>`).join(sep);
+        track.innerHTML = html + sep + html;
+      }
+      const closeBtn = document.getElementById('tickerClose');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          const wrap = document.getElementById('tickerWrap');
+          if (wrap) wrap.style.display = 'none';
+        });
+      }
+    }
+
+    function initBackToTop() {
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
+      window.addEventListener('scroll', () => btn.classList.toggle('show', window.scrollY > 500));
+      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    function setTodayDate() {
+      const el = document.getElementById('todayDate');
+      if (!el) return;
+      const days = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
+      const months = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+      const d = new Date();
+      el.textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTodayDate();
+      renderTicker();
+      renderDistrictQuickNav();
+      initBackToTop();
+    });
+</script>
+{% endblock %}

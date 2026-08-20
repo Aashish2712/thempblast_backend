@@ -5,14 +5,27 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+from django.db import models
+from .models import (
+    Article,
+    Category,
+    EditorialPlacement,
+)
 
 
 def home(request):
     return render(request, "thempblast/index.html")
 
 
-def article(request):
-    return render(request, "thempblast/article.html")
+def article(request, slug):
+    return render(
+        request,
+        "thempblast/article.html",
+        {
+            "article_slug": slug,
+        },
+    )
 
 def category(request):
     return render(request, "thempblast/category.html")
@@ -230,3 +243,292 @@ def contact_submit(request):
             "attachments_sent": len(attachments),
         }
     )
+def get_editorial_articles(placement_type):
+    now = timezone.now()
+
+    return (
+        EditorialPlacement.objects
+        .select_related(
+            "article",
+            "article__category",
+        )
+        .filter(
+            placement_type=placement_type,
+            is_active=True,
+            article__is_published=True,
+        )
+        .filter(
+            models.Q(start_at__isnull=True)
+            | models.Q(start_at__lte=now)
+        )
+        .filter(
+            models.Q(end_at__isnull=True)
+            | models.Q(end_at__gte=now)
+        )
+        .order_by("display_order")
+    )
+def serialize_content_block(block):
+    data = {
+        "type": block.block_type,
+        "order": block.display_order,
+    }
+
+    if block.block_type == "text":
+        data["text"] = block.text
+
+    elif block.block_type == "heading":
+        data["heading"] = block.heading
+
+    elif block.block_type == "quote":
+        data["text"] = block.text
+
+    elif block.block_type == "image":
+        data["image"] = (
+            block.image.url
+            if block.image
+            else ""
+        )
+
+        data["caption"] = block.image_caption
+        data["alt"] = block.image_alt
+
+    elif block.block_type == "video":
+        data["video"] = (
+            block.video.url
+            if block.video
+            else ""
+        )
+
+        data["thumbnail"] = (
+            block.video_thumbnail.url
+            if block.video_thumbnail
+            else ""
+        )
+
+        data["title"] = block.video_title
+        data["caption"] = block.video_caption
+
+    return data
+def serialize_article(article):
+    content_blocks = (
+        article.content_blocks
+        .all()
+        .order_by("display_order", "id")
+    )
+
+    return {
+        "id": article.id,
+        "headline": article.headline,
+        "summary": article.summary,
+        "subheadline": article.subheadline,
+        "slug": article.slug,
+
+        "image": (
+            article.featured_image.url
+            if article.featured_image
+            else ""
+        ),
+
+        "imageCaption": article.image_caption,
+
+        "category": article.category.slug,
+        "catLabel": article.category.name,
+
+        "district": article.district,
+        "author": article.author,
+
+        "isBreaking": article.is_breaking,
+        "isFeatured": article.is_featured,
+
+        "views": article.views,
+
+        "publishedAt": (
+            article.published_at.isoformat()
+            if article.published_at
+            else None
+        ),
+
+        "updatedAt": (
+            article.updated_at.isoformat()
+            if article.updated_at
+            else None
+        ),
+
+        "content": article.content,
+
+        "contentBlocks": [
+            serialize_content_block(block)
+            for block in content_blocks
+        ],
+    }
+
+
+def home_breaking(request):
+    placements = get_editorial_articles(
+        EditorialPlacement.PlacementType.BREAKING_TICKER
+    )
+
+    return JsonResponse({
+        "success": True,
+        "items": [
+            serialize_article(placement.article)
+            for placement in placements
+        ],
+    })
+def home_hero(request):
+    placements = get_editorial_articles(
+        EditorialPlacement.PlacementType.HERO_FEATURED
+    )
+
+    return JsonResponse({
+        "success": True,
+        "items": [
+            serialize_article(placement.article)
+            for placement in placements
+        ],
+    })
+def home_latest(request):
+    placements = get_editorial_articles(
+        EditorialPlacement.PlacementType.LATEST_NEWS
+    )
+
+    return JsonResponse({
+        "success": True,
+        "items": [
+            serialize_article(placement.article)
+            for placement in placements
+        ],
+    })
+def serialize_category(category):
+    return {
+        "id": category.id,
+        "name": category.name,
+        "slug": category.slug,
+        "description": category.description,
+        "displayOrder": category.display_order,
+    }
+def category_list(request):
+    categories = (
+        Category.objects
+        .filter(
+            is_active=True,
+            is_archived=False,
+        )
+        .order_by("display_order", "name")
+    )
+
+    return JsonResponse({
+        "success": True,
+        "items": [
+            serialize_category(category)
+            for category in categories
+        ],
+    })
+def category_detail(request, slug):
+    try:
+        category = (
+            Category.objects
+            .filter(
+                is_active=True,
+                is_archived=False,
+                slug=slug,
+            )
+            .get()
+        )
+    except Category.DoesNotExist:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Category not found.",
+            },
+            status=404,
+        )
+
+    return JsonResponse({
+        "success": True,
+        "item": serialize_category(category),
+    })
+def article_list(request):
+    articles = (
+        Article.objects
+        .select_related("category")
+        .prefetch_related("content_blocks")
+        .filter(
+            is_published=True,
+            category__is_active=True,
+            category__is_archived=False,
+        )
+        .order_by("-published_at", "-created_at")
+    )
+
+    return JsonResponse({
+        "success": True,
+        "items": [
+            serialize_article(article)
+            for article in articles
+        ],
+    })
+def article_detail(request, slug):
+    try:
+        article = (
+            Article.objects
+            .select_related("category")
+            .prefetch_related("content_blocks")
+            .get(
+                slug=slug,
+                is_published=True,
+                category__is_active=True,
+                category__is_archived=False,
+            )
+        )
+    except Article.DoesNotExist:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Article not found.",
+            },
+            status=404,
+        )
+
+    return JsonResponse({
+        "success": True,
+        "item": serialize_article(article),
+    })
+def category_articles(request, slug):
+    try:
+        category = (
+            Category.objects
+            .get(
+                slug=slug,
+                is_active=True,
+                is_archived=False,
+            )
+        )
+    except Category.DoesNotExist:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Category not found.",
+            },
+            status=404,
+        )
+
+    articles = (
+        Article.objects
+        .select_related("category")
+        .prefetch_related("content_blocks")
+        .filter(
+            category=category,
+            is_published=True,
+        )
+        .order_by("-published_at", "-created_at")
+    )
+
+    return JsonResponse({
+        "success": True,
+        "category": serialize_category(category),
+        "items": [
+            serialize_article(article)
+            for article in articles
+        ],
+    })

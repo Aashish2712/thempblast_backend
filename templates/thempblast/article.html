@@ -160,6 +160,7 @@
     }
 
     .article-featured-img img {
+      display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -216,85 +217,46 @@
       width: 100%;
       border-radius: var(--radius-md);
       overflow: hidden;
-      aspect-ratio: 16/9;
       background: var(--mpb-light-gray);
-      margin: var(--space-2) 0 var(--space-1);
+      margin: var(--space-4) 0 var(--space-2);
     }
 
     .article-inline-img img {
+      display: block;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      max-height: 650px;
+      object-fit: contain;
+      margin: 0 auto;
     }
 
     .article-video-block {
-      background: var(--mpb-light-gray);
-      border: 1px solid var(--mpb-border-gray);
-      border-radius: var(--radius-md);
-      padding: var(--space-3);
-      margin: var(--space-4) 0;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      cursor: pointer;
-      min-height: 44px;
-    }
-
-    .article-video-block .thumb {
-      flex: 0 0 120px;
-      width: 120px;
-      aspect-ratio: 16/9;
-      border-radius: 6px;
-      overflow: hidden;
-      position: relative;
-      background: #111;
-    }
-
-    .article-video-block .thumb img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: .85;
+      margin: var(--space-5) 0;
     }
 
-    .article-video-block .thumb i {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 26px;
-    }
-
-    .article-video-block .duration {
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      background: rgba(0, 0, 0, .75);
-      color: #fff;
-      font-size: 10.5px;
-      padding: 1px 5px;
-      border-radius: 3px;
+    .article-video-block video {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: var(--radius-md);
+      background: #000;
+      object-fit: contain;
     }
 
     .article-video-block .video-title {
       font-weight: 700;
       font-size: 14px;
       line-height: 1.4;
+      margin-top: 8px;
     }
 
     .article-video-block .video-sub {
       font-size: 12px;
       color: var(--mpb-mid-gray);
       margin-top: 2px;
-    }
-
-    @media (min-width:768px) {
-      .article-video-block .thumb {
-        flex-basis: 180px;
-        width: 180px;
-      }
+      line-height: 1.5;
     }
 
     .article-actions {
@@ -408,34 +370,13 @@
       align-items: center;
     }
 
-    /* Video modal (mock playback area) */
-    .mock-video-stage {
-      aspect-ratio: 16/9;
-      background: #0c0c0c;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      gap: 8px;
-    }
-
-    .mock-video-stage i {
-      font-size: 48px;
-      opacity: .85;
-    }
-
-    .mock-video-stage .mv-label {
-      font-size: 13px;
-      color: #bbb;
-    }
 </style>
 
 <div class="container-fluid px-page article-shell py-4">
 
       <!-- =============== BREADCRUMB =============== -->
       <nav class="breadcrumb-bar" aria-label="ब्रेडक्रम्ब">
-        <a href="index.html">होम</a>
+        <a href="/">होम</a>
         <span class="sep">/</span>
         <a href="index.html#mp-news" id="breadcrumbCategory">मध्य प्रदेश</a>
         <span class="sep">/</span>
@@ -446,7 +387,6 @@
         <!-- =============== CATEGORY + DEMO BADGE =============== -->
         <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
           <span class="badge-cat cat-mp" id="articleCategoryBadge">मध्य प्रदेश</span>
-          <span class="demo-badge"><i class="bi bi-info-circle"></i> डेमो कंटेंट</span>
         </div>
 
         <!-- =============== HEADLINE + SUBHEADLINE =============== -->
@@ -497,110 +437,312 @@
   </script>
 
   <script>
+    const ARTICLE_SLUG = "{{ article_slug|escapejs }}";
+
     /* ============================================================
        THE MP BLAST — Article Page
        Clean article-page logic: no unused related-news, likes,
        saves, tags, video modal, or sidebar dependencies.
        ============================================================ */
 
-    function img(seed, w, h) {
-      return `https://picsum.photos/seed/${seed}/${w || 900}/${h || 500}`;
+    async function loadArticle() {
+      if (!ARTICLE_SLUG) {
+        showArticleError('लेख उपलब्ध नहीं है।');
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/articles/slug:${encodeURIComponent(ARTICLE_SLUG)}/`,
+          {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: { 'Accept': 'application/json' }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Article API returned HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success || !data.item) {
+          throw new Error('Article was not found.');
+        }
+
+        renderArticle(data.item);
+      } catch (error) {
+        console.error('Article loading failed:', error);
+        showArticleError('लेख लोड नहीं हो सका।');
+      }
     }
 
-    const ARTICLE = {
-      category: "mp",
-      catLabel: "मध्य प्रदेश",
-      location: "इंदौर, मध्य प्रदेश",
-      headline: "इंदौर में मेट्रो रेल परियोजना के दूसरे चरण को लेकर बड़ा अपडेट",
-      subheadline: "शहर के प्रमुख क्षेत्रों को जोड़ने वाली मेट्रो परियोजना के दूसरे चरण के निर्माण कार्य में तेजी की जानकारी सामने आई है।",
-      author: "THE MP BLAST रिपोर्टर",
-      publishedAt: "आज, 10:30 AM",
-      updatedAt: "आज, 11:15 AM",
-      featuredImage: img("article-indore-metro", 1200, 675),
-      caption: "इंदौर मेट्रो लाइन का निर्माण कार्य — प्रतीकात्मक तस्वीर (डेमो)",
-      tags: ["इंदौर", "मध्य प्रदेश", "मेट्रो रेल", "इंफ्रास्ट्रक्चर"]
-    };
-
-    const ARTICLE_CONTENT_HTML = `
-  <p><strong>इंदौर:</strong> शहर में मेट्रो रेल परियोजना के दूसरे चरण को लेकर निर्माण गतिविधियों में तेजी की जानकारी सामने आई है। इस चरण का उद्देश्य शहर के प्रमुख व्यावसायिक, आवासीय और आवागमन वाले क्षेत्रों के बीच कनेक्टिविटी को बेहतर बनाना है। परियोजना से जुड़े अधिकारियों के अनुसार, निर्माण कार्य को तय समय-सीमा में आगे बढ़ाने के लिए अलग-अलग हिस्सों में काम किया जा रहा है।</p>
-
-  <p>पहले चरण में शुरू हुई मेट्रो सेवा के बाद दूसरे चरण को शहर के सार्वजनिक परिवहन नेटवर्क के विस्तार की दिशा में महत्वपूर्ण कदम माना जा रहा है। इसके पूरा होने पर उन यात्रियों को विशेष सुविधा मिलने की उम्मीद है, जिन्हें रोजाना लंबी दूरी तय करने के लिए सड़क परिवहन पर निर्भर रहना पड़ता है।</p>
-
-  <blockquote>“निर्माण कार्य में गुणवत्ता और सुरक्षा को प्राथमिकता देते हुए समयबद्ध तरीके से परियोजना को आगे बढ़ाना हमारा प्रमुख लक्ष्य है।” — परियोजना प्रबंधक (डेमो कथन)</blockquote>
-
-  <h2>दूसरे चरण में क्या बदलेगा?</h2>
-  <p>दूसरे चरण में मेट्रो नेटवर्क को शहर के उन हिस्सों तक विस्तार देने पर फोकस किया जा रहा है, जहां रोजाना बड़ी संख्या में लोग काम, शिक्षा और अन्य जरूरी गतिविधियों के लिए आते-जाते हैं। बेहतर कनेक्टिविटी से प्रमुख मार्गों पर सार्वजनिक परिवहन की पहुंच बढ़ाने और यात्रियों के सफर को अधिक व्यवस्थित बनाने में मदद मिलने की उम्मीद है।</p>
-
-  <div class="article-inline-img">
-    <img src="__INLINE_IMG__" alt="इंदौर मेट्रो परियोजना के निर्माण कार्य की प्रतीकात्मक तस्वीर" loading="lazy">
-  </div>
-  <p class="article-img-caption" style="margin-top:6px;">मेट्रो निर्माण कार्य की प्रतीकात्मक तस्वीर — THE MP BLAST डेमो कंटेंट</p>
-
-  <h2>यात्रियों को क्या फायदा मिलने की उम्मीद?</h2>
-  <p>मेट्रो नेटवर्क के विस्तार का सबसे बड़ा संभावित लाभ तेज और व्यवस्थित सार्वजनिक परिवहन के रूप में देखा जा रहा है। नियमित यात्रियों के लिए यात्रा के समय में कमी, प्रमुख क्षेत्रों तक आसान पहुंच और सड़क यातायात पर निर्भरता कम होना इसके प्रमुख संभावित फायदे हो सकते हैं।</p>
-
-  <ul>
-    <li>शहर के प्रमुख क्षेत्रों के बीच सार्वजनिक परिवहन कनेक्टिविटी बेहतर होने की उम्मीद।</li>
-    <li>दैनिक यात्रियों के लिए अधिक व्यवस्थित और सुविधाजनक आवागमन विकल्प।</li>
-    <li>व्यस्त सड़क मार्गों पर यातायात दबाव कम करने में मदद मिलने की संभावना।</li>
-    <li>भविष्य में शहर के सार्वजनिक परिवहन नेटवर्क के और विस्तार का आधार तैयार होना।</li>
-  </ul>
-
-  <h2>निर्माण के दौरान यातायात पर असर</h2>
-  <p>मेट्रो जैसे बड़े इंफ्रास्ट्रक्चर प्रोजेक्ट के निर्माण के दौरान कुछ मार्गों पर अस्थायी डायवर्जन, बैरिकेडिंग या यातायात व्यवस्था में बदलाव की आवश्यकता हो सकती है। प्रशासन की ओर से यात्रियों से अपील की गई है कि वे निर्माण क्षेत्रों के आसपास लगाए गए संकेतों और स्थानीय यातायात निर्देशों का पालन करें तथा जरूरत पड़ने पर वैकल्पिक मार्गों का इस्तेमाल करें।</p>
-
-  <h2>परियोजना की निगरानी और आगे की तैयारी</h2>
-  <p>निर्माण की गुणवत्ता, सुरक्षा और प्रगति पर लगातार निगरानी रखने के लिए संबंधित टीमों के बीच समन्वय जरूरी है। परियोजना के अलग-अलग हिस्सों में काम की स्थिति की समीक्षा करते हुए आने वाली चुनौतियों को समय पर दूर करने पर जोर दिया जा रहा है। यात्रियों के लिए अंतिम सुविधा तभी सुनिश्चित होगी जब निर्माण, सुरक्षा और संचालन से जुड़े सभी चरण निर्धारित मानकों के अनुसार पूरे हों।</p>
-
-  <p>फिलहाल यह जानकारी <strong>डेमो न्यूज़ कंटेंट</strong> के रूप में प्रस्तुत की जा रही है। वास्तविक समाचार प्रकाशित करते समय परियोजना की आधिकारिक प्रगति, स्वीकृत रूट, समय-सीमा, यातायात डायवर्जन और प्रशासनिक बयानों को संबंधित आधिकारिक स्रोतों से सत्यापित किया जाना चाहिए।</p>
-`;
-
-    function renderArticle() {
-      document.title = `${ARTICLE.headline} | THE MP BLAST`;
+    function renderArticle(article) {
+      document.title = `${article.headline || 'Article'} | THE MP BLAST`;
 
       const categoryLink = document.getElementById('breadcrumbCategory');
       if (categoryLink) {
-        categoryLink.textContent = ARTICLE.catLabel;
-        categoryLink.href = 'index.html#mp-news';
+        categoryLink.textContent =
+          article.catLabel || article.category || 'समाचार';
+        categoryLink.href =
+          `/category/${encodeURIComponent(article.category || '')}/`;
       }
 
       const current = document.getElementById('breadcrumbCurrent');
-      if (current) current.textContent = ARTICLE.headline;
+      if (current) current.textContent = article.headline || '';
 
       const badge = document.getElementById('articleCategoryBadge');
-      if (badge) badge.textContent = ARTICLE.catLabel;
+      if (badge) {
+        badge.textContent =
+          article.catLabel || article.category || 'समाचार';
+      }
 
       const headline = document.getElementById('articleHeadline');
-      if (headline) headline.textContent = ARTICLE.headline;
+      if (headline) headline.textContent = article.headline || '';
 
       const subheadline = document.getElementById('articleSubheadline');
-      if (subheadline) subheadline.textContent = ARTICLE.subheadline;
+      if (subheadline) {
+        subheadline.textContent = article.subheadline || '';
+        subheadline.hidden = !article.subheadline;
+      }
 
+      renderArticleMeta(article);
+      renderFeaturedImage(article);
+      renderArticleContent(article);
+    }
+
+    function renderArticleMeta(article) {
       const meta = document.getElementById('articleMetaRow');
-      if (meta) {
-        meta.innerHTML = `
-      <span class="author"><i class="bi bi-person-circle me-1"></i>${ARTICLE.author}</span>
-      <span class="divider">|</span>
-      <span><i class="bi bi-geo-alt me-1"></i>${ARTICLE.location}</span>
-      <span class="divider">|</span>
-      <span><i class="bi bi-clock me-1"></i>प्रकाशित: ${ARTICLE.publishedAt}</span>
-      <span class="divider">|</span>
-      <span><i class="bi bi-arrow-repeat me-1"></i>अपडेटेड: ${ARTICLE.updatedAt}</span>
-    `;
+      if (!meta) return;
+
+      const items = [];
+
+      if (article.author) {
+        items.push(`
+          <span class="author">
+            <i class="bi bi-person-circle me-1"></i>
+            ${escapeHtml(article.author)}
+          </span>
+        `);
       }
 
-      const featured = document.getElementById('articleFeaturedImg');
-      if (featured) {
-        featured.src = ARTICLE.featuredImage;
-        featured.alt = ARTICLE.headline;
+      if (article.district) {
+        items.push(`
+          <span>
+            <i class="bi bi-geo-alt me-1"></i>
+            ${escapeHtml(article.district)}
+          </span>
+        `);
       }
 
+      const published = formatArticleDate(article.publishedAt);
+      if (published) {
+        items.push(`
+          <span>
+            <i class="bi bi-clock me-1"></i>
+            प्रकाशित: ${escapeHtml(published)}
+          </span>
+        `);
+      }
+
+      const updated = formatArticleDate(article.updatedAt);
+      if (updated) {
+        items.push(`
+          <span>
+            <i class="bi bi-arrow-repeat me-1"></i>
+            अपडेटेड: ${escapeHtml(updated)}
+          </span>
+        `);
+      }
+
+      meta.innerHTML = items.map((item, index) =>
+        index === 0 ? item : `<span class="divider">|</span>${item}`
+      ).join('');
+    }
+
+    function formatArticleDate(value) {
+      if (!value) return '';
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+
+      return date.toLocaleString('hi-IN', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function renderFeaturedImage(article) {
+      const figure = document.querySelector(
+        '.article-featured-img'
+      )?.closest('figure');
+
+      const wrapper = document.querySelector('.article-featured-img');
+      const image = document.getElementById('articleFeaturedImg');
       const caption = document.getElementById('articleImgCaption');
-      if (caption) caption.textContent = ARTICLE.caption;
 
+      if (!wrapper || !image) return;
+
+      if (article.image) {
+        image.src = article.image;
+        image.alt = article.headline || 'Article image';
+        image.style.display = 'block';
+        wrapper.style.display = '';
+
+        if (caption) {
+          caption.textContent = article.imageCaption || '';
+          caption.style.display =
+            article.imageCaption ? '' : 'none';
+        }
+
+        if (figure) figure.style.display = '';
+      } else {
+        image.removeAttribute('src');
+        image.alt = '';
+        image.style.display = 'none';
+        wrapper.style.display = 'none';
+
+        if (caption) {
+          caption.textContent = '';
+          caption.style.display = 'none';
+        }
+
+        if (figure) figure.style.display = 'none';
+      }
+    }
+
+    function renderArticleContent(article) {
       const body = document.getElementById('articleContentBody');
+      if (!body) return;
+
+      const blocks = Array.isArray(article.contentBlocks)
+        ? [...article.contentBlocks]
+        : [];
+
+      if (blocks.length) {
+        blocks.sort(
+          (a, b) => Number(a.order || 0) - Number(b.order || 0)
+        );
+
+        body.innerHTML = blocks.map(renderContentBlock).join('');
+      } else {
+        body.innerHTML = article.content || '';
+      }
+    }
+
+    function renderContentBlock(block) {
+      switch (block.type) {
+        case 'text':
+          return `<div class="article-content-text">${block.text || ''}</div>`;
+
+        case 'heading':
+          return `<h2>${escapeHtml(block.heading || '')}</h2>`;
+
+        case 'quote':
+          return `<blockquote>${block.text || ''}</blockquote>`;
+
+        case 'image':
+          if (!block.image) return '';
+
+          return `
+            <figure class="article-inline-img">
+              <img
+                src="${escapeAttribute(block.image)}"
+                alt="${escapeAttribute(block.alt || '')}"
+                loading="lazy"
+              >
+              ${
+                block.caption
+                  ? `<figcaption class="article-img-caption">
+                       ${escapeHtml(block.caption)}
+                     </figcaption>`
+                  : ''
+              }
+            </figure>
+          `;
+
+        case 'video':
+          if (!block.video) return '';
+
+          return `
+            <figure class="article-video-block">
+              <video
+                controls
+                preload="metadata"
+                playsinline
+                ${
+                  block.thumbnail
+                    ? `poster="${escapeAttribute(block.thumbnail)}"`
+                    : ''
+                }
+              >
+                <source
+                  src="${escapeAttribute(block.video)}"
+                  type="video/mp4"
+                >
+                आपका ब्राउज़र वीडियो प्लेबैक को सपोर्ट नहीं करता।
+              </video>
+
+              ${
+                block.title
+                  ? `<figcaption class="video-title">
+                       ${escapeHtml(block.title)}
+                     </figcaption>`
+                  : ''
+              }
+
+              ${
+                block.caption
+                  ? `<div class="video-sub">
+                       ${escapeHtml(block.caption)}
+                     </div>`
+                  : ''
+              }
+            </figure>
+          `;
+
+        default:
+          console.warn(
+            'Unknown article content block type:',
+            block.type
+          );
+          return '';
+      }
+    }
+
+    function escapeHtml(value) {
+      const div = document.createElement('div');
+      div.textContent = value ?? '';
+      return div.innerHTML;
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value)
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showArticleError(message) {
+      const body = document.getElementById('articleContentBody');
+
       if (body) {
-        body.innerHTML = ARTICLE_CONTENT_HTML.replace('__INLINE_IMG__', img('article-inline-site', 900, 500));
+        body.innerHTML = `
+          <div class="alert alert-light border" role="alert">
+            ${escapeHtml(message)}
+          </div>
+        `;
+      }
+
+      const headline = document.getElementById('articleHeadline');
+      if (headline) headline.textContent = 'लेख उपलब्ध नहीं है';
+
+      const subheadline =
+        document.getElementById('articleSubheadline');
+
+      if (subheadline) {
+        subheadline.textContent = '';
+        subheadline.hidden = true;
       }
     }
 
@@ -608,17 +750,16 @@
       const track = document.getElementById('tickerTrack');
       if (!track) return;
 
-      const headlines = [
-        'इंदौर मेट्रो परियोजना के दूसरे चरण में निर्माण कार्य तेज',
-        'शहर में सार्वजनिक परिवहन नेटवर्क विस्तार पर फोकस',
-        'निर्माण क्षेत्रों में यातायात निर्देशों का पालन करने की अपील'
-      ];
-
-      const items = headlines.map(text => `<a href="index.html#mp-news">${text}</a>`).join('<span aria-hidden="true" style="opacity:.6;">●</span>');
-      track.innerHTML = items + '<span aria-hidden="true" style="opacity:.6;">●</span>' + items;
+      /*
+       * Live breaking-news data is controlled by the homepage.
+       * Do not show hard-coded demo headlines on the article page.
+       */
+      track.innerHTML = '';
 
       const closeBtn = document.getElementById('tickerClose');
-      if (closeBtn) {
+      if (closeBtn && !closeBtn.dataset.bound) {
+        closeBtn.dataset.bound = 'true';
+
         closeBtn.addEventListener('click', () => {
           const wrap = document.getElementById('tickerWrap');
           if (wrap) wrap.style.display = 'none';
@@ -650,8 +791,17 @@
       if (twitterBtn) {
         twitterBtn.addEventListener('click', () => {
           const url = encodeURIComponent(window.location.href);
-          const text = encodeURIComponent(ARTICLE.headline);
-          window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'noopener,width=600,height=500');
+          const headline =
+            document.getElementById('articleHeadline')?.textContent ||
+            document.title;
+
+          const text = encodeURIComponent(headline);
+
+          window.open(
+            `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+            '_blank',
+            'noopener,width=600,height=500'
+          );
         });
       }
 
@@ -687,7 +837,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       setTodayDate();
       renderTicker();
-      renderArticle();
+      loadArticle();
       initShare();
       initBackToTop();
     });

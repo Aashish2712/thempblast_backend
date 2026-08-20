@@ -229,7 +229,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="cAttachments">अटैचमेंट (वैकल्पिक  संलग्नक)</label>
+            <label class="form-label" for="cAttachments">अटैचमेंट (वैकल्पिक)</label>
             <input
               type="file"
               id="cAttachments"
@@ -238,7 +238,6 @@
               accept="image/*,video/*,.pdf"
             >
             <div class="contact-attachment-help">
-              अधिकतम 5 फाइलें, कुल 20 MB तक।
               फोटो, वीडियो या PDF जोड़ सकते हैं। अटैचमेंट लॉगिन से पहले सेव नहीं होंगे; लॉगिन के बाद इन्हें दोबारा चुनें।
             </div>
           </div>
@@ -354,7 +353,7 @@
         </div>
         <div class="alert alert-light border small mb-0">
           <i class="bi bi-shield-check text-success me-1"></i>
-           यह संदेश आपके लॉगिन किए हुए THE MP BLAST अकाउंट से भेजा जाएगा।
+          यह संदेश आपके लॉगिन किए हुए अकाउंट से भेजा जाएगा।
         </div>
       </div>
       <div class="modal-footer">
@@ -406,32 +405,12 @@
   const contactFormStep = document.getElementById('contactFormStep');
   const successStep = document.getElementById('successStep');
   const contactForm = document.getElementById('contactForm');
-function showContactForm() {
-    if (contactFormStep) {
-        contactFormStep.classList.remove('d-none');
-    }
 
-    if (successStep) {
-        successStep.classList.add('d-none');
-    }
-}
-
-function showContactSuccess() {
-    if (contactFormStep) {
-        contactFormStep.classList.add('d-none');
-    }
-
-    if (successStep) {
-        successStep.classList.remove('d-none');
-    }
-}
   const cName = document.getElementById('cName');
   const cEmail = document.getElementById('cEmail');
   const cSubject = document.getElementById('cSubject');
   const cMessage = document.getElementById('cMessage');
   const cAttachments = document.getElementById('cAttachments');
-
-
 
   const contactUserBanner = document.getElementById('contactUserBanner');
   const verifiedEmailLabel = document.getElementById('verifiedEmailLabel');
@@ -677,173 +656,17 @@ function showContactSuccess() {
   }
 
   /* Placeholder only until the real contact API is implemented. */
-  function getCsrfToken() {
-    const cookie = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('csrftoken='));
+  confirmSendBtn.addEventListener('click', () => {
+    confirmSendBtn.blur();
+    if (sendConfirmModal) sendConfirmModal.hide();
+    mpbToast('प्रेषण सेवा अभी कनेक्ट नहीं की गई है।');
+  });
 
-    return cookie
-        ? decodeURIComponent(cookie.split('=')[1])
-        : '';
-}
-confirmSendBtn.addEventListener(
-    'click',
-    async () => {
-
-        confirmSendBtn.blur();
-
-        /*
-         * Build multipart/form-data.
-         * Files are sent directly to Django and are not
-         * saved in the application database.
-         */
-        const formData = new FormData();
-
-        const name =
-            document.getElementById('cName');
-
-        const subject =
-            document.getElementById('cSubject');
-
-        const message =
-            document.getElementById('cMessage');
-
-        formData.append(
-            'name',
-            name.value.trim()
-        );
-
-        formData.append(
-            'subject',
-            subject.value.trim()
-        );
-
-        formData.append(
-            'message',
-            message.value
-        );
-
-        if (cAttachments?.files?.length) {
-            for (const file of cAttachments.files) {
-                formData.append(
-                    'attachments',
-                    file
-                );
-            }
-        }
-
-        const originalText =
-            confirmSendBtn.innerHTML;
-
-        try {
-            confirmSendBtn.disabled = true;
-
-            confirmSendBtn.innerHTML =
-                '<span class="spinner-border spinner-border-sm me-1" ' +
-                'aria-hidden="true"></span>' +
-                'भेजा जा रहा है...';
-
-            const csrfToken =
-                getCsrfToken();
-
-            if (!csrfToken) {
-                throw new Error(
-                    'सुरक्षा टोकन उपलब्ध नहीं है।'
-                );
-            }
-
-            const response =
-                await fetch(
-                    '/api/contact/',
-                    {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {
-                            'X-CSRFToken':
-                                csrfToken,
-                            'Accept':
-                                'application/json'
-                        },
-                        body: formData
-                    }
-                );
-
-            let data = {};
-
-            try {
-                data = await response.json();
-            } catch (_) {
-                data = {};
-            }
-
-            if (!response.ok || !data.success) {
-                throw new Error(
-                    data.message ||
-                    'संदेश भेजने में समस्या हुई।'
-                );
-            }
-
-            /*
-             * IMPORTANT:
-             * Clear everything only after Django confirms
-             * successful email delivery.
-             */
-            clearContactDraft();
-
-            contactForm.reset();
-
-            if (cEmail) {
-                cEmail.value =
-                    currentUser?.email || '';
-            }
-
-            if (cAttachments) {
-                cAttachments.value = '';
-            }
-
-            if (sendConfirmModal) {
-                sendConfirmModal.hide();
-            }
-
-           showContactSuccess();
-
-            mpbToast(
-                'आपका संदेश सफलतापूर्वक भेज दिया गया है।'
-            );
-
-        } catch (error) {
-
-            console.error(
-                'Contact submission failed:',
-                error
-            );
-
-            /*
-             * IMPORTANT:
-             * Do NOT reset the form here.
-             * Do NOT clear the draft here.
-             * Do NOT clear attachments here.
-             */
-
-            mpbToast(
-                error.message ||
-                'संदेश भेजने में समस्या हुई।'
-            );
-
-        } finally {
-            confirmSendBtn.disabled = false;
-
-            confirmSendBtn.innerHTML =
-                originalText;
-        }
-    }
-);
   if (sendAnotherBtn) {
     sendAnotherBtn.addEventListener('click', () => {
       clearContactDraft();
       contactForm.reset();
       showAuthenticatedUser(currentUser || {});
-        showContactForm();
     });
   }
 

@@ -1,4 +1,10 @@
+from pathlib import Path
+
 from django.shortcuts import render
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 
 def home(request):
@@ -21,3 +27,206 @@ def contact(request):
 
 def login(request):
     return render(request, "thempblast/login.html")
+@require_POST
+def contact_submit(request):
+    """
+    V1 Contact submission.
+
+    - Requires authenticated session.
+    - Does not save anything in the database.
+    - Does not permanently store uploaded files.
+    - Sends the message and optional attachments by email.
+    """
+
+    if not request.user.is_authenticated:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Login required.",
+            },
+            status=401,
+        )
+
+    name = (request.POST.get("name") or "").strip()
+    subject = (request.POST.get("subject") or "").strip()
+    message = (request.POST.get("message") or "").strip()
+
+    # ---------------------------------------------------------
+    # Basic field validation
+    # ---------------------------------------------------------
+
+    if len(name) < 2:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Please enter a valid name.",
+            },
+            status=400,
+        )
+
+    if len(subject) < 3:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Please enter a valid subject.",
+            },
+            status=400,
+        )
+
+    if len(message) < 10:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Message must be at least 10 characters.",
+            },
+            status=400,
+        )
+
+    # ---------------------------------------------------------
+    # Authenticated identity
+    # ---------------------------------------------------------
+
+    user_email = request.user.email
+
+    recipient = getattr(
+        settings,
+        "CONTACT_RECIPIENT_EMAIL",
+        None,
+    )
+
+    if not recipient:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Contact email is not configured.",
+            },
+            status=500,
+        )
+
+    # ---------------------------------------------------------
+    # Attachment rules
+    # ---------------------------------------------------------
+
+    allowed_extensions = {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp",
+        ".pdf",
+        ".mp4",
+        ".mov",
+    }
+
+    max_files = 5
+    max_single_size = 10 * 1024 * 1024       # 10 MB
+    max_total_size = 20 * 1024 * 1024        # 20 MB
+
+    attachments = request.FILES.getlist("attachments")
+
+    if len(attachments) > max_files:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": f"You can attach a maximum of {max_files} files.",
+            },
+            status=400,
+        )
+
+    total_size = 0
+
+    for uploaded_file in attachments:
+        filename = Path(uploaded_file.name).name
+        suffix = Path(filename).suffix.lower()
+
+        if suffix not in allowed_extensions:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": (
+                        f"File type '{suffix or 'unknown'}' "
+                        "is not allowed."
+                    ),
+                },
+                status=400,
+            )
+
+        if uploaded_file.size > max_single_size:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": (
+                        f"'{filename}' is larger than "
+                        "the 10 MB single-file limit."
+                    ),
+                },
+                status=400,
+            )
+
+        total_size += uploaded_file.size
+
+    if total_size > max_total_size:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Total attachment size cannot exceed 20 MB.",
+            },
+            status=400,
+        )
+
+    # ---------------------------------------------------------
+    # Build email
+    # ---------------------------------------------------------
+
+    email_subject = f"[THE MP BLAST Contact] {subject}"
+
+    email_body = (
+        "New contact message received.\n\n"
+        f"Name: {name}\n"
+        f"Email: {user_email}\n"
+        f"Subject: {subject}\n"
+        f"Attachments: {len(attachments)}\n\n"
+        "Message:\n"
+        f"{message}\n"
+    )
+
+    try:
+        email = EmailMessage(
+            subject=email_subject,
+            body=email_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[recipient],
+            reply_to=[user_email],
+        )
+
+        # -----------------------------------------------------
+        # Add attachments directly to the email
+        # -----------------------------------------------------
+
+        for uploaded_file in attachments:
+            email.attach(
+                uploaded_file.name,
+                uploaded_file.read(),
+                uploaded_file.content_type,
+            )
+
+        email.send(fail_silently=False)
+
+    except Exception:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Unable to send your message right now. "
+                    "Please try again."
+                ),
+            },
+            status=500,
+        )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Your message was sent successfully.",
+            "attachments_sent": len(attachments),
+        }
+    )

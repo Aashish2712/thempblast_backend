@@ -1528,6 +1528,44 @@
 (function () {
   'use strict';
 
+  const loginParams = new URLSearchParams(
+    window.location.search
+  );
+
+  const nextUrl =
+    loginParams.get('next') || '/';
+
+  const incomingEmail =
+    loginParams.get('email') || '';
+
+  // Existing DOM references
+  const loginEmail =
+    document.getElementById('loginEmail');
+
+  if (incomingEmail && loginEmail) {
+    loginEmail.value = incomingEmail;
+  }
+
+  // Redirect after successful authentication
+  function redirectAfterLogin() {
+    /*
+     * Only allow local paths.
+     * Never redirect to an external URL supplied through ?next=.
+     */
+    if (
+      nextUrl.startsWith('/') &&
+      !nextUrl.startsWith('//')
+    ) {
+      window.location.href = nextUrl;
+      return;
+    }
+
+    window.location.href = '/';
+  }
+
+  // ============================================
+  // YOUR EXISTING LOGIN JAVASCRIPT CONTINUES HERE
+  // ============================================
   /*
    * THE MP BLAST
    * Real passwordless authentication frontend
@@ -1552,7 +1590,7 @@
   const signupFlow = $('signupFlow');
 
   const loginEmailForm = $('loginEmailForm');
-  const loginEmail = $('loginEmail');
+ // const loginEmail = $('loginEmail');
   const loginEmailError = $('loginEmailError');
   const loginEmailStep = $('loginEmailStep');
   const loginOtpStep = $('loginOtpStep');
@@ -2157,6 +2195,10 @@
       }
 
       clearInterval(signupCountdownId);
+      if (nextUrl !== '/') {
+  redirectAfterLogin();
+  return;
+}
 
       showAccount(
         authState.user,
@@ -2308,10 +2350,15 @@
 
       clearInterval(loginCountdownId);
 
-      showAccount(
-        authState.user,
-        'आपके ईमेल की पुष्टि हो गई है और आप सफलतापूर्वक लॉगिन हैं।'
-      );
+    if (nextUrl !== '/') {
+  redirectAfterLogin();
+  return;
+}
+
+showAccount(
+  authState.user,
+  'आपके ईमेल की पुष्टि हो गई है और आप सफलतापूर्वक लॉगिन हैं।'
+);
 
     } catch (error) {
       loginOtpError.textContent =

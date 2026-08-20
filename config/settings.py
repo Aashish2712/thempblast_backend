@@ -139,6 +139,9 @@ DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     EMAIL_HOST_USER,
 )
+CONTACT_RECIPIENT_EMAIL = os.getenv(
+    "CONTACT_RECIPIENT_EMAIL"
+)
 
 DEFAULT_FROM_EMAIL = "noreply@thempblast.local"
 

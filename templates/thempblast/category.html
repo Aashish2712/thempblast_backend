@@ -3,240 +3,820 @@
 {% block content %}
 
 <style>
-/* ============================================================
-       CATEGORY PAGE
-       ============================================================ */
-    .category-page {
-      padding: var(--space-7) 0 var(--space-8);
-    }
+  /* ============================================================
+     CATEGORY PAGE
+     ============================================================ */
 
-    .category-intro {
-      margin-bottom: var(--space-5);
-    }
+  .category-page {
+    padding: var(--space-7) 0 var(--space-8);
+  }
 
+  .category-intro {
+    margin-bottom: var(--space-5);
+  }
+
+  .category-intro h1 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .category-intro p {
+    color: var(--mpb-mid-gray);
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .category-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 0 10px;
+    scrollbar-width: thin;
+    margin-bottom: var(--space-5);
+  }
+
+  .category-tab {
+    flex: 0 0 auto;
+    border: 1px solid var(--mpb-border-gray);
+    background: #fff;
+    color: var(--mpb-dark-gray);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .category-tab:hover,
+  .category-tab.active {
+    background: var(--mpb-red);
+    border-color: var(--mpb-red);
+    color: #fff;
+  }
+
+  .category-count {
+    color: var(--mpb-mid-gray);
+    font-size: 13px;
+    margin-bottom: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
     .category-intro h1 {
-      font-size: 28px;
-      line-height: 1.2;
-      margin-bottom: 8px;
+      font-size: 34px;
     }
-
-    .category-intro p {
-      color: var(--mpb-mid-gray);
-      margin: 0;
-      font-size: 14px;
-    }
-
-    .category-tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 2px 0 10px;
-      scrollbar-width: thin;
-      margin-bottom: var(--space-5);
-    }
-
-    .category-tab {
-      flex: 0 0 auto;
-      border: 1px solid var(--mpb-border-gray);
-      background: #fff;
-      color: var(--mpb-dark-gray);
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .category-tab:hover,
-    .category-tab.active {
-      background: var(--mpb-red);
-      border-color: var(--mpb-red);
-      color: #fff;
-    }
-
-    .category-count {
-      color: var(--mpb-mid-gray);
-      font-size: 13px;
-      margin-bottom: var(--space-4);
-    }
-
-    @media (min-width: 768px) {
-      .category-intro h1 {
-        font-size: 34px;
-      }
-    }
+  }
 </style>
 
 <section class="category-page">
-      <div class="container-fluid px-page">
-        <div class="category-intro">
-          <h1 id="categoryTitle">सभी खबरें</h1>
-          <p id="categoryDescription">THE MP BLAST की विषयवार ताज़ा खबरें एक ही जगह।</p>
+  <div class="container-fluid px-page">
+
+    <!-- CATEGORY HEADER -->
+    <div class="category-intro">
+      <h1 id="categoryTitle">लोड हो रहा है...</h1>
+
+      <p id="categoryDescription">
+        खबरें लोड हो रही हैं...
+      </p>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <!--
+      These are intentionally static for this stage.
+      We will make them dynamic from Django Admin later.
+    -->
+    <nav
+    class="category-tabs"
+    id="categoryTabs"
+    aria-label="समाचार श्रेणियाँ"
+>
+    <a
+        class="category-tab"
+        data-category="all"
+        href="/category/"
+    >
+        सभी खबरें
+    </a>
+</nav>
+
+    <!-- ARTICLE COUNT -->
+    <div
+      class="category-count"
+      id="categoryCount"
+    ></div>
+
+    <!-- DYNAMIC ARTICLE GRID -->
+    <div
+      class="grid-auto"
+      id="categoryNewsSlot"
+    >
+      <div class="col-12">
+        <div class="alert alert-light border">
+          खबरें लोड हो रही हैं...
         </div>
-
-        <nav class="category-tabs" aria-label="समाचार श्रेणियाँ">
-          <a class="category-tab" data-category="all" href="/category/">सभी खबरें</a>
-          <a class="category-tab" data-category="national" href="/category/?category=national">राष्ट्रीय</a>
-          <a class="category-tab" data-category="politics" href="/category/?category=politics">राजनीति</a>
-          <a class="category-tab" data-category="crime" href="/category/?category=crime">अपराध</a>
-          <a class="category-tab" data-category="education" href="/category/?category=education">शिक्षा व रोज़गार</a>
-          <a class="category-tab" data-category="business" href="/category/?category=business">व्यापार</a>
-          <a class="category-tab" data-category="sports" href="/category/?category=sports">खेल</a>
-          <a class="category-tab" data-category="entertainment" href="/category/?category=entertainment">मनोरंजन</a>
-          <a class="category-tab" data-category="mp" href="/category/?category=mp">मध्य प्रदेश</a>
-        </nav>
-
-        <div class="category-count" id="categoryCount"></div>
-        <div class="grid-auto" id="categoryNewsSlot"></div>
       </div>
-    </section>
+    </div>
+
+  </div>
+</section>
 
 {% endblock %}
 
+
 {% block extra_js %}
+
 <script>
-document.addEventListener('click', function (e) {
-      var a = e.target.closest('a[href="#"]');
-      if (a) e.preventDefault();
+  /* ============================================================
+     CATEGORY PAGE
+     Dynamic API-driven implementation
+     ============================================================ */
+
+
+  /* ------------------------------------------------------------
+     Prevent placeholder "#" links from jumping to page top
+     ------------------------------------------------------------ */
+
+  document.addEventListener('click', function (e) {
+    const link = e.target.closest('a[href="#"]');
+
+    if (link) {
+      e.preventDefault();
+    }
+  });
+
+
+  /* ============================================================
+     CATEGORY SLUG
+     
+     Examples:
+
+     /category/
+     -> ""
+
+     /category/mp/
+     -> "mp"
+
+     /category/politics/
+     -> "politics"
+     ============================================================ */
+
+  function getCategorySlug() {
+
+    const parts = window.location.pathname
+      .split('/')
+      .filter(Boolean);
+
+    if (parts[0] !== 'category') {
+      return '';
+    }
+
+    return parts[1] || '';
+  }
+
+
+  /* ============================================================
+     FETCH CATEGORY
+     ============================================================ */
+
+  async function fetchCategory(slug) {
+
+    const url = slug
+      ? `/api/categories/${encodeURIComponent(slug)}/`
+      : `/api/categories/`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json'
+      }
     });
 
-    const CATEGORY_META = {
-      all: { title: 'सभी खबरें', description: 'THE MP BLAST की सभी प्रमुख और ताज़ा खबरें एक ही जगह।' },
-      national: { title: 'राष्ट्रीय समाचार', description: 'देशभर से जुड़ी प्रमुख राष्ट्रीय खबरें।' },
-      politics: { title: 'राजनीति', description: 'मध्य प्रदेश और देश की प्रमुख राजनीतिक खबरें।' },
-      crime: { title: 'अपराध', description: 'अपराध, पुलिस और कानून-व्यवस्था से जुड़ी खबरें।' },
-      education: { title: 'शिक्षा व रोज़गार', description: 'शिक्षा, परीक्षा, भर्ती और रोज़गार से जुड़ी खबरें।' },
-      business: { title: 'व्यापार', description: 'व्यापार, उद्योग, बाजार और अर्थव्यवस्था से जुड़ी खबरें।' },
-      sports: { title: 'खेल', description: 'खेल जगत की प्रमुख खबरें और अपडेट।' },
-      entertainment: { title: 'मनोरंजन', description: 'फिल्म, संस्कृति और मनोरंजन जगत की खबरें।' },
-      mp: { title: 'मध्य प्रदेश', description: 'मध्य प्रदेश के अलग-अलग जिलों से जुड़ी प्रमुख खबरें।' }
-    };
+    if (!response.ok) {
+      throw new Error(
+        `Category API returned HTTP ${response.status}`
+      );
+    }
 
-    function img(seed, w, h) { return `https://picsum.photos/seed/${seed}/${w || 600}/${h || 400}`; }
-    let uid = 1;
-    function n(data) { return Object.assign({ id: uid++, views: 0, timestamp: "2 घंटे पहले" }, data); }
+    return await response.json();
+  }
 
-    const NEWS = [
 
-      n({ headline: "इंदौर में मेट्रो रेल परियोजना का दूसरा चरण शुरू, यात्रियों को मिलेगी बड़ी राहत", summary: "शहर के प्रमुख मार्गों को जोड़ने वाली मेट्रो लाइन का निर्माण कार्य तेज़ी से जारी है, अगले वर्ष तक पूरा होने की उम्मीद।", image: img("indore-metro", 900, 600), category: "mp", catLabel: "मध्य प्रदेश", district: "इंदौर", isBreaking: true, isFeatured: true, views: 15200, timestamp: "32 मिनट पहले" }),
-      n({ headline: "भोपाल में नई आईटी पार्क योजना को मिली मंजूरी, हज़ारों को मिलेगा रोज़गार", summary: "राज्य सरकार ने निवेश को बढ़ावा देने के लिए भोपाल में नए आईटी पार्क की स्थापना को हरी झंडी दी है।", image: img("bhopal-it", 900, 600), category: "mp", catLabel: "मध्य प्रदेश", district: "भोपाल", isFeatured: true, views: 9800, timestamp: "1 घंटा पहले" }),
-      n({ headline: "उज्जैन महाकाल मंदिर में श्रावण मास पर उमड़ा श्रद्धालुओं का सैलाब", summary: "मंदिर प्रशासन ने भीड़ प्रबंधन के लिए विशेष व्यवस्था की है, दर्शन का समय बढ़ाया गया।", image: img("ujjain-temple", 900, 600), category: "mp", catLabel: "मध्य प्रदेश", district: "उज्जैन", isFeatured: true, views: 22100, timestamp: "3 घंटे पहले" }),
+  /* ============================================================
+     FETCH CATEGORY ARTICLES
+     ============================================================ */
 
-      n({ headline: "मध्य प्रदेश विधानसभा का मानसून सत्र अगले सप्ताह से, कई विधेयक होंगे पेश", summary: "सत्र के दौरान किसानों से जुड़े मुद्दों पर विशेष चर्चा होने की संभावना है।", image: img("mp-vidhansabha", 700, 470), category: "politics", catLabel: "राजनीति", district: "भोपाल", isBreaking: true, timestamp: "20 मिनट पहले", views: 6700 }),
-      n({ headline: "नगरीय निकाय चुनाव को लेकर सभी दलों ने तेज़ की तैयारी", summary: "जिला मुख्यालयों में उम्मीदवारों के नाम को लेकर बैठकों का दौर शुरू हो गया है।", image: img("election-prep", 700, 470), category: "politics", catLabel: "राजनीति", district: "ग्वालियर", timestamp: "5 घंटे पहले", views: 4300 }),
-      n({ headline: "किसान सम्मान निधि की अगली किस्त इस सप्ताह होगी जारी", summary: "कृषि विभाग ने पात्र किसानों की सूची अंतिम रूप दे दी है।", image: img("kisan-nidhi", 700, 470), category: "politics", catLabel: "राजनीति", district: "सागर", timestamp: "6 घंटे पहले", views: 5100 }),
-      n({ headline: "मंत्रिमंडल विस्तार की अटकलें तेज़, इस सप्ताह हो सकता है फैसला", summary: "पार्टी सूत्रों के अनुसार संगठन और सरकार के बीच तालमेल पर चर्चा जारी है।", image: img("cabinet", 700, 470), category: "politics", catLabel: "राजनीति", district: "भोपाल", timestamp: "8 घंटे पहले", views: 3900 }),
+  async function fetchCategoryArticles(slug) {
 
-      n({ headline: "रतलाम में पुलिस ने चोरी के तीन आरोपियों को किया गिरफ्तार", summary: "आरोपियों से लाखों की चोरी का सामान बरामद, आगे की पूछताछ जारी।", image: img("ratlam-police", 700, 470), category: "crime", catLabel: "अपराध", district: "रतलाम", timestamp: "1 घंटा पहले", views: 7200 }),
-      n({ headline: "खरगोन में साइबर ठगी गिरोह का पर्दाफाश, चार गिरफ्तार", summary: "पुलिस ने फर्जी लोन एप के ज़रिए ठगी करने वाले गिरोह को पकड़ा।", image: img("cyber-crime", 700, 470), category: "crime", catLabel: "अपराध", district: "खरगोन", timestamp: "2 घंटे पहले", views: 8800 }),
-      n({ headline: "मंदसौर में सड़क दुर्घटना में दो घायल, अस्पताल में भर्ती", summary: "तेज़ रफ़्तार वाहन की टक्कर से हुआ हादसा, पुलिस ने जांच शुरू की।", image: img("road-accident", 700, 470), category: "crime", catLabel: "अपराध", district: "मंदसौर", timestamp: "4 घंटे पहले", views: 3400 }),
-      n({ headline: "नीमच में अवैध शराब के खिलाफ प्रशासन की बड़ी कार्रवाई", summary: "छापेमारी में भारी मात्रा में अवैध शराब जब्त, एक गिरफ्तार।", image: img("raid-neemuch", 700, 470), category: "crime", catLabel: "अपराध", district: "नीमच", timestamp: "7 घंटे पहले", views: 2900 }),
+    if (!slug) {
+      return [];
+    }
 
-      n({ headline: "मध्य प्रदेश बोर्ड 12वीं का परिणाम अगले महीने होगा घोषित", summary: "मूल्यांकन कार्य अंतिम चरण में, विद्यार्थी वेबसाइट पर देख सकेंगे परिणाम।", image: img("mp-board", 700, 470), category: "education", catLabel: "शिक्षा", district: "भोपाल", timestamp: "3 घंटे पहले", views: 12300 }),
-      n({ headline: "पटवारी भर्ती परीक्षा की नई तिथि जारी, जानें पूरा शेड्यूल", summary: "राज्य कर्मचारी चयन मंडल ने संशोधित कार्यक्रम अधिसूचित किया।", image: img("patwari-exam", 700, 470), category: "education", catLabel: "शिक्षा", district: "इंदौर", timestamp: "5 घंटे पहले", views: 9100 }),
-      n({ headline: "जबलपुर विश्वविद्यालय में नए सत्र से शुरू होंगे तीन नए कोर्स", summary: "रोज़गारपरक पाठ्यक्रमों को शामिल करने पर विश्वविद्यालय का फोकस।", image: img("university", 700, 470), category: "education", catLabel: "शिक्षा", district: "जबलपुर", timestamp: "9 घंटे पहले", views: 2600 }),
-      n({ headline: "सरकारी स्कूलों में शिक्षकों के हज़ारों पद जल्द भरे जाएंगे", summary: "शिक्षा विभाग ने भर्ती प्रक्रिया को मंज़ूरी दी, आवेदन जल्द शुरू।", image: img("teacher-jobs", 700, 470), category: "education", catLabel: "रोज़गार", district: "रीवा", timestamp: "10 घंटे पहले", views: 15400 }),
+    const url =
+      `/api/categories/${encodeURIComponent(slug)}/articles/`;
 
-      n({ headline: "इंदौर बना मध्य प्रदेश का सबसे बड़ा स्टार्टअप हब, निवेश में उछाल", summary: "पिछले एक साल में शहर में सौ से अधिक नए स्टार्टअप पंजीकृत हुए।", image: img("startup-indore", 700, 470), category: "business", catLabel: "व्यापार", district: "इंदौर", timestamp: "2 घंटे पहले", views: 6300 }),
-      n({ headline: "सोयाबीन की कीमतों में उछाल, किसानों के चेहरे खिले", summary: "मंडियों में आवक बढ़ने के बावजूद भाव मजबूत बने हुए हैं।", image: img("soyabean", 700, 470), category: "business", catLabel: "व्यापार", district: "देवास", timestamp: "4 घंटे पहले", views: 4700 }),
-      n({ headline: "धार में नई औद्योगिक इकाई का शिलान्यास, मिलेगा स्थानीय रोज़गार", summary: "निवेशकों ने क्षेत्र में विनिर्माण इकाई लगाने में रुचि दिखाई।", image: img("industry-dhar", 700, 470), category: "business", catLabel: "व्यापार", district: "धार", timestamp: "6 घंटे पहले", views: 2100 }),
-      n({ headline: "रियल एस्टेट बाज़ार में तेजी, भोपाल-इंदौर में मांग सबसे अधिक", summary: "रिपोर्ट के अनुसार आवासीय संपत्तियों की बिक्री में बीस प्रतिशत की वृद्धि।", image: img("real-estate", 700, 470), category: "business", catLabel: "व्यापार", district: "भोपाल", timestamp: "8 घंटे पहले", views: 5300 }),
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
 
-      n({ headline: "मध्य प्रदेश क्रिकेट टीम ने रणजी ट्रॉफी में दर्ज की शानदार जीत", summary: "होल्कर स्टेडियम में हुए मुकाबले में टीम ने प्रतिद्वंद्वी को पारी के अंतर से हराया।", image: img("cricket-mp", 700, 470), category: "sports", catLabel: "खेल", district: "इंदौर", timestamp: "1 घंटा पहले", views: 18700 }),
-      n({ headline: "ग्वालियर में राष्ट्रीय कुश्ती चैंपियनशिप का हुआ शुभारंभ", summary: "देशभर के पहलवान बादल विजय सिंह स्टेडियम में जौहर दिखाएंगे।", image: img("wrestling", 700, 470), category: "sports", catLabel: "खेल", district: "ग्वालियर", timestamp: "3 घंटे पहले", views: 5600 }),
-      n({ headline: "भोपाल की एथलीट ने राष्ट्रीय खेलों में जीता स्वर्ण पदक", summary: "400 मीटर दौड़ में शानदार प्रदर्शन कर प्रदेश का मान बढ़ाया।", image: img("athletics", 700, 470), category: "sports", catLabel: "खेल", district: "भोपाल", timestamp: "5 घंटे पहले", views: 9200 }),
-      n({ headline: "जबलपुर में जिला स्तरीय फुटबॉल टूर्नामेंट शुरू", summary: "बीस से अधिक टीमें खिताब की दावेदारी में शामिल।", image: img("football", 700, 470), category: "sports", catLabel: "खेल", district: "जबलपुर", timestamp: "7 घंटे पहले", views: 2400 }),
+    if (!response.ok) {
+      throw new Error(
+        `Category articles API returned HTTP ${response.status}`
+      );
+    }
 
-      n({ headline: "बॉलीवुड की चर्चित फिल्म की शूटिंग अब उज्जैन में, स्थानीय कलाकारों को मौका", summary: "फिल्म निर्माताओं ने शहर की ऐतिहासिक धरोहर को पृष्ठभूमि बनाने का फैसला किया।", image: img("film-shoot", 700, 470), category: "entertainment", catLabel: "मनोरंजन", district: "उज्जैन", timestamp: "2 घंटे पहले", views: 14300 }),
-      n({ headline: "इंदौर में आयोजित होगा तीन दिवसीय सांस्कृतिक महोत्सव", summary: "संगीत, नृत्य और लोककला की प्रस्तुतियों से सजेगा कार्यक्रम।", image: img("cultural-fest", 700, 470), category: "entertainment", catLabel: "मनोरंजन", district: "इंदौर", timestamp: "6 घंटे पहले", views: 6100 }),
-      n({ headline: "भोपाल के कलाकार की लघु फिल्म को मिली अंतरराष्ट्रीय पहचान", summary: "फिल्म को एक प्रतिष्ठित फिल्म समारोह में सराहना मिली।", image: img("short-film", 700, 470), category: "entertainment", catLabel: "मनोरंजन", district: "भोपाल", timestamp: "9 घंटे पहले", views: 3800 }),
+    const data = await response.json();
 
-      n({ headline: "राष्ट्रीय शिक्षा नीति पर केंद्र सरकार का नया दिशा-निर्देश जारी", summary: "राज्यों को नई गाइडलाइन के अनुरूप पाठ्यक्रम में बदलाव के निर्देश।", image: img("national-edu", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "नई दिल्ली", timestamp: "1 घंटा पहले", views: 11200 }),
-      n({ headline: "मानसून सत्र में संसद में कई महत्वपूर्ण विधेयकों पर होगी चर्चा", summary: "आर्थिक सुधारों से जुड़े विधेयक इस सत्र में पेश किए जाने की संभावना।", image: img("parliament", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "नई दिल्ली", timestamp: "3 घंटे पहले", views: 8700 }),
-      n({ headline: "देशभर में मानसून सक्रिय, कई राज्यों में भारी बारिश का अलर्ट", summary: "मौसम विभाग ने अगले तीन दिनों के लिए चेतावनी जारी की है।", image: img("monsoon", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "मुंबई", timestamp: "5 घंटे पहले", views: 16800 }),
-      n({ headline: "भारतीय अर्थव्यवस्था की वृद्धि दर उम्मीद से बेहतर रही: रिपोर्ट", summary: "विशेषज्ञों ने आगामी तिमाही के लिए भी सकारात्मक अनुमान जताया।", image: img("economy", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "मुंबई", timestamp: "7 घंटे पहले", views: 7300 }),
+    if (!data.success) {
+      throw new Error(
+        'Category articles API returned an unsuccessful response.'
+      );
+    }
+
+    return data.items || [];
+  }
+
+  async function fetchAllArticles() {
+
+    const response = await fetch(
+        '/api/articles/',
+        {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json'
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `Articles API returned HTTP ${response.status}`
+        );
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+        throw new Error(
+            'Articles API returned an unsuccessful response.'
+        );
+    }
+
+    return data.items || [];
+}
+
+
+  /* ============================================================
+     NUMBER FORMATTER
+     ============================================================ */
+
+  function fmtNum(num) {
+
+    num = Number(num) || 0;
+
+    if (num >= 100000) {
+      return (
+        (num / 100000)
+          .toFixed(1)
+          .replace('.0', '')
+        + 'L'
+      );
+    }
+
+    if (num >= 1000) {
+      return (
+        (num / 1000)
+          .toFixed(1)
+          .replace('.0', '')
+        + 'K'
+      );
+    }
+
+    return String(num);
+  }
+
+
+  /* ============================================================
+     CATEGORY CSS CLASS
+     ============================================================ */
+
+  function catClass(category) {
+    return `cat-${category || 'default'}`;
+  }
+
+
+  /* ============================================================
+     ARTICLE CARD
+     
+     Uses the existing category-card design but now receives
+     real Django Article API data.
+     ============================================================ */
+
+  function tplStandard(item) {
+
+    const imageHtml = item.image
+      ? `
+        <img
+          src="${item.image}"
+          alt="${item.headline || ''}"
+          loading="lazy"
+        >
+      `
+      : `
+        <div
+          class="d-flex align-items-center justify-content-center bg-light"
+          style="height:100%; min-height:180px;"
+        >
+          <i
+            class="bi bi-image"
+            style="font-size:42px; opacity:.35;"
+            aria-hidden="true"
+          ></i>
+        </div>
+      `;
+
+    return `
+      <a
+        href="/article/${encodeURIComponent(item.slug)}/"
+        class="card-mpb hover-lift text-decoration-none"
+      >
+
+        <div class="thumb">
+
+          ${imageHtml}
+
+          <span class="badge-cat ${catClass(item.category)}">
+            ${item.catLabel || item.category || ''}
+          </span>
+
+          ${
+            item.isBreaking
+              ? `
+                <span class="badge-live">
+                  <span class="dot"></span>
+                  LIVE
+                </span>
+              `
+              : ''
+          }
+
+        </div>
+
+        <div class="body">
+
+          <h2 class="headline">
+            ${item.headline || ''}
+          </h2>
+
+          <p class="summary">
+            ${item.summary || ''}
+          </p>
+
+          <div class="meta-row">
+
+            <span class="loc">
+              <i class="bi bi-geo-alt"></i>
+              ${item.district || ''}
+            </span>
+
+            <span>
+              ${formatPublishedTime(item.publishedAt)}
+            </span>
+
+          </div>
+
+          <div class="meta-row">
+
+            <span class="stat-row">
+              <span>
+                <i class="bi bi-eye-fill"></i>
+                ${fmtNum(item.views)}
+              </span>
+            </span>
+
+          </div>
+
+        </div>
+
+      </a>
+    `;
+  }
+
+
+  /* ============================================================
+     DATE FORMATTER
+     ============================================================ */
+
+  function formatPublishedTime(value) {
+
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toLocaleDateString(
+      'hi-IN',
+      {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    );
+  }
+
+
+  /* ============================================================
+     RENDER CATEGORY
+     ============================================================ */
+  function renderCategoryTabs(categories) {
+
+    const tabs =
+        document.getElementById('categoryTabs');
+
+    if (!tabs) {
+        return;
+    }
+
+    const currentSlug =
+        getCategorySlug();
+
+    const allTab = `
+        <a
+            class="category-tab ${
+                currentSlug === '' ? 'active' : ''
+            }"
+            data-category="all"
+            href="/category/"
+        >
+            सभी खबरें
+        </a>
+    `;
+
+    const categoryTabs = categories
+        .map(category => {
+
+            return `
+                <a
+                    class="category-tab ${
+                        category.slug === currentSlug
+                            ? 'active'
+                            : ''
+                    }"
+                    data-category="${category.slug}"
+                    href="/category/${encodeURIComponent(category.slug)}/"
+                >
+                    ${category.name}
+                </a>
+            `;
+
+        })
+        .join('');
+
+    tabs.innerHTML =
+        allTab + categoryTabs;
+}
+  async function fetchCategories() {
+
+    const response = await fetch(
+        '/api/categories/',
+        {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json'
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `Categories API returned HTTP ${response.status}`
+        );
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+        throw new Error(
+            'Categories API returned an unsuccessful response.'
+        );
+    }
+
+    return data.items || [];
+}
+  async function renderCategory() {
+
+    const slug = getCategorySlug();
+
+    try {
+
+      let categoryName = 'सभी खबरें';
+
+      let categoryDescription =
+        'THE MP BLAST की सभी प्रमुख और ताज़ा खबरें एक ही जगह।';
+
+      let items = [];
+
+
+      /* --------------------------------------------------------
+         SPECIFIC CATEGORY
+         
+         Example:
+         /category/mp/
+         -------------------------------------------------------- */
+
+      if (slug) {
+
+    /*
+     * Specific category
+     *
+     * Example:
+     * /category/mp/
+     */
+
+    const categoryData =
+        await fetchCategory(slug);
+
+    if (!categoryData.success) {
+        throw new Error(
+            'Category was not found.'
+        );
+    }
+
+    const category =
+        categoryData.item ||
+        categoryData.category;
+
+    if (!category) {
+        throw new Error(
+            'Category data is missing from API response.'
+        );
+    }
+
+    categoryName =
+        category.name ||
+        categoryName;
+
+    categoryDescription =
+        category.description ||
+        categoryDescription;
+
+    items =
+        await fetchCategoryArticles(slug);
+
+} else {
+
+    /*
+     * All News
+     *
+     * Example:
+     * /category/
+     *
+     * Uses the general Article API.
+     */
+
+    items =
+        await fetchAllArticles();
+}
+
+      /* --------------------------------------------------------
+         CATEGORY TITLE
+         -------------------------------------------------------- */
+
+      const title =
+        document.getElementById(
+          'categoryTitle'
+        );
+
+      if (title) {
+        title.textContent =
+          categoryName;
+      }
+
+
+      /* --------------------------------------------------------
+         CATEGORY DESCRIPTION
+         -------------------------------------------------------- */
+
+      const description =
+        document.getElementById(
+          'categoryDescription'
+        );
+
+      if (description) {
+
+        description.textContent =
+          categoryDescription;
+      }
+
+
+      /* --------------------------------------------------------
+         ARTICLE COUNT
+         -------------------------------------------------------- */
+
+      const count =
+        document.getElementById(
+          'categoryCount'
+        );
+
+      if (count) {
+
+        count.textContent =
+          `${items.length} खबरें`;
+      }
+
+
+      /* --------------------------------------------------------
+         ARTICLE GRID
+         -------------------------------------------------------- */
+
+      const slot =
+        document.getElementById(
+          'categoryNewsSlot'
+        );
+
+      if (slot) {
+
+        if (items.length) {
+
+          slot.innerHTML =
+            items
+              .map(tplStandard)
+              .join('');
+
+        } else {
+
+          slot.innerHTML = `
+            <div class="col-12">
+              <div class="alert alert-light border">
+                इस श्रेणी में अभी कोई खबर उपलब्ध नहीं है।
+              </div>
+            </div>
+          `;
+        }
+      }
+
+
+      /* --------------------------------------------------------
+         ACTIVE CATEGORY TAB
+         -------------------------------------------------------- */
+
+  
+
+    } catch (error) {
+
+      console.error(
+        'Category loading failed:',
+        error
+      );
+
+      const slot =
+        document.getElementById(
+          'categoryNewsSlot'
+        );
+
+      if (slot) {
+
+        slot.innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-danger">
+              खबरें लोड नहीं हो सकीं।
+            </div>
+          </div>
+        `;
+      }
+    }
+  }
+
+
+  /* ============================================================
+     TODAY'S DATE
+     ============================================================ */
+
+  function setTodayDate() {
+
+    const el =
+      document.getElementById(
+        'todayDate'
+      );
+
+    if (!el) {
+      return;
+    }
+
+    const days = [
+      "रविवार",
+      "सोमवार",
+      "मंगलवार",
+      "बुधवार",
+      "गुरुवार",
+      "शुक्रवार",
+      "शनिवार"
     ];
 
-    function fmtNum(num) {
-      if (num >= 100000) return (num / 100000).toFixed(1).replace('.0', '') + 'L';
-      if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'K';
-      return String(num);
-    }
-    function catClass(cat) { return `cat-${cat}`; }
+    const months = [
+      "जनवरी",
+      "फ़रवरी",
+      "मार्च",
+      "अप्रैल",
+      "मई",
+      "जून",
+      "जुलाई",
+      "अगस्त",
+      "सितंबर",
+      "अक्टूबर",
+      "नवंबर",
+      "दिसंबर"
+    ];
 
-    function tplStandard(item) {
-      return `
-        <a href="article.html" class="card-mpb hover-lift text-decoration-none">
-          <div class="thumb">
-            <img src="${item.image}" alt="${item.headline}" loading="lazy">
-            <span class="badge-cat ${catClass(item.category)}">${item.catLabel}</span>
-            ${item.isBreaking ? `<span class="badge-live"><span class="dot"></span>LIVE</span>` : ``}
-          </div>
-          <div class="body">
-            <h2 class="headline">${item.headline}</h2>
-            <p class="summary">${item.summary || ''}</p>
-            <div class="meta-row">
-              <span class="loc"><i class="bi bi-geo-alt"></i>${item.district}</span>
-              <span>${item.timestamp}</span>
-            </div>
-            <div class="meta-row">
-              <span class="stat-row"><span><i class="bi bi-eye-fill"></i> ${fmtNum(item.views)}</span></span>
-            </div>
-          </div>
-        </a>`;
-    }
+    const d = new Date();
 
-    function setTodayDate() {
-      const el = document.getElementById('todayDate');
-      if (!el) return;
-      const days = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
-      const months = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
-      const d = new Date();
-      el.textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    }
+    el.textContent =
+      `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
 
-    function renderTicker() {
-      const breaking = NEWS.filter(x => x.isBreaking);
-      const pool = breaking.length ? breaking : NEWS.slice(0, 5);
-      const track = document.getElementById('tickerTrack');
-      const sep = '<span aria-hidden="true" style="opacity:.6;">●</span>';
-      const items = pool.map(item => `<a href="article.html">${item.headline}</a>`).join(sep);
-      track.innerHTML = items + sep + items;
-      document.getElementById('tickerClose').addEventListener('click', () => {
-        document.getElementById('tickerWrap').style.display = 'none';
-      });
+
+  /* ============================================================
+     BACK TO TOP
+     ============================================================ */
+
+  function initBackToTop() {
+
+    const btn =
+      document.getElementById(
+        'backToTop'
+      );
+
+    if (!btn) {
+      return;
     }
 
-    function initBackToTop() {
-      const btn = document.getElementById('backToTop');
-      window.addEventListener('scroll', () => btn.classList.toggle('show', window.scrollY > 500));
-      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener(
+      'scroll',
+      () => {
+        btn.classList.toggle(
+          'show',
+          window.scrollY > 500
+        );
+      }
+    );
+
+    btn.addEventListener(
+      'click',
+      () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    );
+  }
+
+
+  /* ============================================================
+     PAGE INITIALIZATION
+     ============================================================ */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+
+        setTodayDate();
+
+        initBackToTop();
+
+        try {
+
+            const categories =
+                await fetchCategories();
+
+            renderCategoryTabs(categories);
+
+            await renderCategory();
+
+        } catch (error) {
+
+            console.error(
+                'Category page initialization failed:',
+                error
+            );
+
+        }
+
     }
+);
 
-    function renderCategory() {
-      const params = new URLSearchParams(window.location.search);
-      const requested = params.get('category') || 'all';
-      const category = Object.prototype.hasOwnProperty.call(CATEGORY_META, requested) ? requested : 'all';
-      const meta = CATEGORY_META[category];
-      const items = category === 'all' ? [...NEWS].sort((a, b) => b.views - a.views) : NEWS.filter(x => x.category === category);
-
-      document.getElementById('categoryTitle').textContent = meta.title;
-      document.getElementById('categoryDescription').textContent = meta.description;
-      document.getElementById('categoryCount').textContent = `${items.length} खबरें`;
-      document.getElementById('categoryNewsSlot').innerHTML = items.length
-        ? items.map(tplStandard).join('')
-        : '<div class="col-12"><div class="alert alert-light border">इस श्रेणी में अभी कोई खबर उपलब्ध नहीं है।</div></div>';
-
-      document.querySelectorAll('.category-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.category === category);
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      setTodayDate();
-      renderTicker();
-      renderCategory();
-      initBackToTop();
-    });
 </script>
+
 {% endblock %}

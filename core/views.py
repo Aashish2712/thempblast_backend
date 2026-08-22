@@ -27,8 +27,14 @@ def article(request, slug):
         },
     )
 
-def category(request):
-    return render(request, "thempblast/category.html")
+def category(request, slug=None):
+    return render(
+        request,
+        "thempblast/category.html",
+        {
+            "category_slug": slug or "",
+        },
+    )
 
 
 def about(request):
@@ -458,7 +464,7 @@ def article_list(request):
             category__is_active=True,
             category__is_archived=False,
         )
-        .order_by("-published_at", "-created_at")
+        .order_by("-updated_at","-published_at","-created_at",)
     )
 
     return JsonResponse({
@@ -521,7 +527,7 @@ def category_articles(request, slug):
             category=category,
             is_published=True,
         )
-        .order_by("-published_at", "-created_at")
+        .order_by("-updated_at","-published_at","-created_at",)
     )
 
     return JsonResponse({

@@ -11,6 +11,11 @@ urlpatterns = [
         name="article",
     ),
     path("category/", views.category, name="category"),
+    path(
+        "category/<slug:slug>/",
+        views.category,
+        name="category_detail_page"),
+        
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
     path("login/", views.login, name="login"),

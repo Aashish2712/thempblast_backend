@@ -378,7 +378,7 @@
       <nav class="breadcrumb-bar" aria-label="ब्रेडक्रम्ब">
         <a href="/">होम</a>
         <span class="sep">/</span>
-        <a href="index.html#mp-news" id="breadcrumbCategory">मध्य प्रदेश</a>
+        <a href="/" id="breadcrumbCategory">मध्य प्रदेश</a>
         <span class="sep">/</span>
         <span class="current" id="breadcrumbCurrent">इंदौर मेट्रो रेल परियोजना अपडेट</span>
       </nav>
@@ -453,7 +453,7 @@
 
       try {
         const response = await fetch(
-          `/api/articles/slug:${encodeURIComponent(ARTICLE_SLUG)}/`,
+         `/api/articles/${encodeURIComponent(ARTICLE_SLUG)}/`,
           {
             method: 'GET',
             credentials: 'same-origin',

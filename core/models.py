@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.text import slugify
+from unidecode import unidecode
 from .validators import (
     validate_article_image,
     validate_article_video,
@@ -28,6 +30,28 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            transliterated_name = unidecode(self.name)
+
+            base_slug = slugify(
+                transliterated_name,
+                allow_unicode=False,
+            )
+
+            slug = base_slug
+            counter = 2
+
+            while Category.objects.filter(
+                slug=slug
+            ).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
 
 class Article(models.Model):
@@ -102,6 +126,27 @@ class Article(models.Model):
 
     def __str__(self):
         return self.headline
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            transliterated_headline = unidecode(self.headline)
+
+            base_slug = slugify(
+                transliterated_headline,
+                allow_unicode=False,
+        )
+
+            slug = base_slug
+            counter = 2
+
+            while Article.objects.filter(
+                slug=slug
+            ).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
 class ArticleContentBlock(models.Model):
 

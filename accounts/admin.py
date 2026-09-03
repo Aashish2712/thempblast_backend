@@ -1,3 +1,35 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 
-# Register your models here.
+User = get_user_model()
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = (
+        "email",
+        "is_active",
+        "is_staff",
+        "is_superuser",
+        "date_joined",
+        "last_login",
+    )
+
+    list_filter = (
+        "is_active",
+        "is_staff",
+        "is_superuser",
+    )
+
+    search_fields = (
+        "email",
+    )
+
+    ordering = (
+        "-date_joined",
+    )
+
+    readonly_fields = (
+        "date_joined",
+        "last_login",
+    )

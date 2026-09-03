@@ -24,90 +24,19 @@
       <div class="container-fluid px-page">
         <div class="section-heading">
           <h2><span class="bar"></span>ताज़ा खबरें</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
+          <a href="/category/" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
         </div>
         <div class="grid-auto" id="latestNewsSlot"></div>
       </div>
     </section>
 
 
-    <!-- =============== NATIONAL NEWS =============== -->
-    <section id="national" class="news-section alt-bg">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>राष्ट्रीय समाचार</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="grid-auto" id="nationalSlot"></div>
-      </div>
-    </section>
-
-    <!-- =============== POLITICS =============== -->
-    <section id="politics" class="news-section">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>राजनीति</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="row g-3" id="politicsSlot"></div>
-      </div>
-    </section>
-
-    <!-- =============== CRIME =============== -->
-    <section id="crime" class="news-section alt-bg">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>अपराध</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="row g-3" id="crimeSlot"></div>
-      </div>
-    </section>
-
-    <!-- =============== EDUCATION & JOBS =============== -->
-    <section id="education" class="news-section">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>शिक्षा व रोज़गार</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="row g-3" id="educationSlot"></div>
-      </div>
-    </section>
-
-    <!-- =============== BUSINESS =============== -->
-    <section id="business" class="news-section alt-bg">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>व्यापार</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="row g-3" id="businessSlot"></div>
-      </div>
-    </section>
-
-    <!-- =============== SPORTS =============== -->
-    <section id="sports" class="news-section">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>खेल</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="row g-3" id="sportsSlot"></div>
-      </div>
-    </section>
-
-    <!-- =============== ENTERTAINMENT =============== -->
-    <section id="entertainment" class="news-section alt-bg">
-      <div class="container-fluid px-page">
-        <div class="section-heading">
-          <h2><span class="bar"></span>मनोरंजन</h2>
-          <a href="category.html" class="view-all">सभी देखें <i class="bi bi-chevron-left"></i></a>
-        </div>
-        <div class="row g-3" id="entertainmentSlot"></div>
-      </div>
-    </section>
-
+    
+<section id="home-categories" class="news-section">
+  <div class="container-fluid px-page">
+    <div id="homeCategoriesSlot"></div>
+  </div>
+</section>
 
     <section class="news-section">
       <div class="container-fluid px-page">
@@ -117,7 +46,7 @@
             <p>अपने क्षेत्र की खबर, फोटो या वीडियो हमें भेजें — हम उसे सत्यापित कर आपके नाम के साथ प्रकाशित करेंगे।</p>
           </div>
           <div class="d-flex gap-2 flex-shrink-0">
-            <a href="contact.html" class="btn btn-mpb-red"><i class="bi bi-send-fill me-1"></i>खबर भेजें</a>
+            <a href="/contact/" class="btn btn-mpb-red"><i class="bi bi-send-fill me-1"></i>खबर भेजें</a>
           </div>
         </div>
       </div>
@@ -129,237 +58,723 @@
 
 {% block extra_js %}
 
+<script>
+(function () {
+    "use strict";
 
-  <script>
-    /* Prevent placeholder href="#" links (features/pages not yet built) from
-       jumping the page to top. Real navigation/anchor links are unaffected. */
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest('a[href="#"]');
-      if (a) e.preventDefault();
-    });
-  </script>
-
-  <script>
-    /* ============================================================
-       THE MP BLAST — Mock Data
-       ============================================================ */
-
-    function img(seed, w, h) { return `https://picsum.photos/seed/${seed}/${w || 600}/${h || 400}`; }
-
-    let uid = 1;
-    function n(data) { return Object.assign({ id: uid++, views: 0, timestamp: "2 घंटे पहले" }, data); }
-
-    const NEWS = [
-      n({ headline: "इंदौर में मेट्रो रेल परियोजना का दूसरा चरण शुरू, यात्रियों को मिलेगी बड़ी राहत", summary: "शहर के प्रमुख मार्गों को जोड़ने वाली मेट्रो लाइन का निर्माण कार्य तेज़ी से जारी है, अगले वर्ष तक पूरा होने की उम्मीद।", image: img("indore-metro", 900, 600), category: "mp", catLabel: "मध्य प्रदेश", district: "इंदौर", isBreaking: true, isFeatured: true, views: 15200, timestamp: "32 मिनट पहले" }),
-      n({ headline: "भोपाल में नई आईटी पार्क योजना को मिली मंजूरी, हज़ारों को मिलेगा रोज़गार", summary: "राज्य सरकार ने निवेश को बढ़ावा देने के लिए भोपाल में नए आईटी पार्क की स्थापना को हरी झंडी दी है।", image: img("bhopal-it", 900, 600), category: "mp", catLabel: "मध्य प्रदेश", district: "भोपाल", isFeatured: true, views: 9800, timestamp: "1 घंटा पहले" }),
-      n({ headline: "उज्जैन महाकाल मंदिर में श्रावण मास पर उमड़ा श्रद्धालुओं का सैलाब", summary: "मंदिर प्रशासन ने भीड़ प्रबंधन के लिए विशेष व्यवस्था की है, दर्शन का समय बढ़ाया गया।", image: img("ujjain-temple", 900, 600), category: "mp", catLabel: "मध्य प्रदेश", district: "उज्जैन", isFeatured: true, views: 22100, timestamp: "3 घंटे पहले" }),
-
-      n({ headline: "मध्य प्रदेश विधानसभा का मानसून सत्र अगले सप्ताह से, कई विधेयक होंगे पेश", summary: "सत्र के दौरान किसानों से जुड़े मुद्दों पर विशेष चर्चा होने की संभावना है।", image: img("mp-vidhansabha", 700, 470), category: "politics", catLabel: "राजनीति", district: "भोपाल", isBreaking: true, timestamp: "20 मिनट पहले", views: 6700 }),
-      n({ headline: "नगरीय निकाय चुनाव को लेकर सभी दलों ने तेज़ की तैयारी", summary: "जिला मुख्यालयों में उम्मीदवारों के नाम को लेकर बैठकों का दौर शुरू हो गया है।", image: img("election-prep", 700, 470), category: "politics", catLabel: "राजनीति", district: "ग्वालियर", timestamp: "5 घंटे पहले", views: 4300 }),
-      n({ headline: "किसान सम्मान निधि की अगली किस्त इस सप्ताह होगी जारी", summary: "कृषि विभाग ने पात्र किसानों की सूची अंतिम रूप दे दी है।", image: img("kisan-nidhi", 700, 470), category: "politics", catLabel: "राजनीति", district: "सागर", timestamp: "6 घंटे पहले", views: 5100 }),
-      n({ headline: "मंत्रिमंडल विस्तार की अटकलें तेज़, इस सप्ताह हो सकता है फैसला", summary: "पार्टी सूत्रों के अनुसार संगठन और सरकार के बीच तालमेल पर चर्चा जारी है।", image: img("cabinet", 700, 470), category: "politics", catLabel: "राजनीति", district: "भोपाल", timestamp: "8 घंटे पहले", views: 3900 }),
-
-      n({ headline: "रतलाम में पुलिस ने चोरी के तीन आरोपियों को किया गिरफ्तार", summary: "आरोपियों से लाखों की चोरी का सामान बरामद, आगे की पूछताछ जारी।", image: img("ratlam-police", 700, 470), category: "crime", catLabel: "अपराध", district: "रतलाम", timestamp: "1 घंटा पहले", views: 7200 }),
-      n({ headline: "खरगोन में साइबर ठगी गिरोह का पर्दाफाश, चार गिरफ्तार", summary: "पुलिस ने फर्जी लोन एप के ज़रिए ठगी करने वाले गिरोह को पकड़ा।", image: img("cyber-crime", 700, 470), category: "crime", catLabel: "अपराध", district: "खरगोन", timestamp: "2 घंटे पहले", views: 8800 }),
-      n({ headline: "मंदसौर में सड़क दुर्घटना में दो घायल, अस्पताल में भर्ती", summary: "तेज़ रफ़्तार वाहन की टक्कर से हुआ हादसा, पुलिस ने जांच शुरू की।", image: img("road-accident", 700, 470), category: "crime", catLabel: "अपराध", district: "मंदसौर", timestamp: "4 घंटे पहले", views: 3400 }),
-      n({ headline: "नीमच में अवैध शराब के खिलाफ प्रशासन की बड़ी कार्रवाई", summary: "छापेमारी में भारी मात्रा में अवैध शराब जब्त, एक गिरफ्तार।", image: img("raid-neemuch", 700, 470), category: "crime", catLabel: "अपराध", district: "नीमच", timestamp: "7 घंटे पहले", views: 2900 }),
-
-      n({ headline: "मध्य प्रदेश बोर्ड 12वीं का परिणाम अगले महीने होगा घोषित", summary: "मूल्यांकन कार्य अंतिम चरण में, विद्यार्थी वेबसाइट पर देख सकेंगे परिणाम।", image: img("mp-board", 700, 470), category: "education", catLabel: "शिक्षा", district: "भोपाल", timestamp: "3 घंटे पहले", views: 12300 }),
-      n({ headline: "पटवारी भर्ती परीक्षा की नई तिथि जारी, जानें पूरा शेड्यूल", summary: "राज्य कर्मचारी चयन मंडल ने संशोधित कार्यक्रम अधिसूचित किया।", image: img("patwari-exam", 700, 470), category: "education", catLabel: "शिक्षा", district: "इंदौर", timestamp: "5 घंटे पहले", views: 9100 }),
-      n({ headline: "जबलपुर विश्वविद्यालय में नए सत्र से शुरू होंगे तीन नए कोर्स", summary: "रोज़गारपरक पाठ्यक्रमों को शामिल करने पर विश्वविद्यालय का फोकस।", image: img("university", 700, 470), category: "education", catLabel: "शिक्षा", district: "जबलपुर", timestamp: "9 घंटे पहले", views: 2600 }),
-      n({ headline: "सरकारी स्कूलों में शिक्षकों के हज़ारों पद जल्द भरे जाएंगे", summary: "शिक्षा विभाग ने भर्ती प्रक्रिया को मंज़ूरी दी, आवेदन जल्द शुरू।", image: img("teacher-jobs", 700, 470), category: "education", catLabel: "रोज़गार", district: "रीवा", timestamp: "10 घंटे पहले", views: 15400 }),
-
-      n({ headline: "इंदौर बना मध्य प्रदेश का सबसे बड़ा स्टार्टअप हब, निवेश में उछाल", summary: "पिछले एक साल में शहर में सौ से अधिक नए स्टार्टअप पंजीकृत हुए।", image: img("startup-indore", 700, 470), category: "business", catLabel: "व्यापार", district: "इंदौर", timestamp: "2 घंटे पहले", views: 6300 }),
-      n({ headline: "सोयाबीन की कीमतों में उछाल, किसानों के चेहरे खिले", summary: "मंडियों में आवक बढ़ने के बावजूद भाव मजबूत बने हुए हैं।", image: img("soyabean", 700, 470), category: "business", catLabel: "व्यापार", district: "देवास", timestamp: "4 घंटे पहले", views: 4700 }),
-      n({ headline: "धार में नई औद्योगिक इकाई का शिलान्यास, मिलेगा स्थानीय रोज़गार", summary: "निवेशकों ने क्षेत्र में विनिर्माण इकाई लगाने में रुचि दिखाई।", image: img("industry-dhar", 700, 470), category: "business", catLabel: "व्यापार", district: "धार", timestamp: "6 घंटे पहले", views: 2100 }),
-      n({ headline: "रियल एस्टेट बाज़ार में तेजी, भोपाल-इंदौर में मांग सबसे अधिक", summary: "रिपोर्ट के अनुसार आवासीय संपत्तियों की बिक्री में बीस प्रतिशत की वृद्धि।", image: img("real-estate", 700, 470), category: "business", catLabel: "व्यापार", district: "भोपाल", timestamp: "8 घंटे पहले", views: 5300 }),
-
-      n({ headline: "मध्य प्रदेश क्रिकेट टीम ने रणजी ट्रॉफी में दर्ज की शानदार जीत", summary: "होल्कर स्टेडियम में हुए मुकाबले में टीम ने प्रतिद्वंद्वी को पारी के अंतर से हराया।", image: img("cricket-mp", 700, 470), category: "sports", catLabel: "खेल", district: "इंदौर", timestamp: "1 घंटा पहले", views: 18700 }),
-      n({ headline: "ग्वालियर में राष्ट्रीय कुश्ती चैंपियनशिप का हुआ शुभारंभ", summary: "देशभर के पहलवान बादल विजय सिंह स्टेडियम में जौहर दिखाएंगे।", image: img("wrestling", 700, 470), category: "sports", catLabel: "खेल", district: "ग्वालियर", timestamp: "3 घंटे पहले", views: 5600 }),
-      n({ headline: "भोपाल की एथलीट ने राष्ट्रीय खेलों में जीता स्वर्ण पदक", summary: "400 मीटर दौड़ में शानदार प्रदर्शन कर प्रदेश का मान बढ़ाया।", image: img("athletics", 700, 470), category: "sports", catLabel: "खेल", district: "भोपाल", timestamp: "5 घंटे पहले", views: 9200 }),
-      n({ headline: "जबलपुर में जिला स्तरीय फुटबॉल टूर्नामेंट शुरू", summary: "बीस से अधिक टीमें खिताब की दावेदारी में शामिल।", image: img("football", 700, 470), category: "sports", catLabel: "खेल", district: "जबलपुर", timestamp: "7 घंटे पहले", views: 2400 }),
-
-      n({ headline: "बॉलीवुड की चर्चित फिल्म की शूटिंग अब उज्जैन में, स्थानीय कलाकारों को मौका", summary: "फिल्म निर्माताओं ने शहर की ऐतिहासिक धरोहर को पृष्ठभूमि बनाने का फैसला किया।", image: img("film-shoot", 700, 470), category: "entertainment", catLabel: "मनोरंजन", district: "उज्जैन", timestamp: "2 घंटे पहले", views: 14300 }),
-      n({ headline: "इंदौर में आयोजित होगा तीन दिवसीय सांस्कृतिक महोत्सव", summary: "संगीत, नृत्य और लोककला की प्रस्तुतियों से सजेगा कार्यक्रम।", image: img("cultural-fest", 700, 470), category: "entertainment", catLabel: "मनोरंजन", district: "इंदौर", timestamp: "6 घंटे पहले", views: 6100 }),
-      n({ headline: "भोपाल के कलाकार की लघु फिल्म को मिली अंतरराष्ट्रीय पहचान", summary: "फिल्म को एक प्रतिष्ठित फिल्म समारोह में सराहना मिली।", image: img("short-film", 700, 470), category: "entertainment", catLabel: "मनोरंजन", district: "भोपाल", timestamp: "9 घंटे पहले", views: 3800 }),
-
-      n({ headline: "राष्ट्रीय शिक्षा नीति पर केंद्र सरकार का नया दिशा-निर्देश जारी", summary: "राज्यों को नई गाइडलाइन के अनुरूप पाठ्यक्रम में बदलाव के निर्देश।", image: img("national-edu", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "नई दिल्ली", timestamp: "1 घंटा पहले", views: 11200 }),
-      n({ headline: "मानसून सत्र में संसद में कई महत्वपूर्ण विधेयकों पर होगी चर्चा", summary: "आर्थिक सुधारों से जुड़े विधेयक इस सत्र में पेश किए जाने की संभावना।", image: img("parliament", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "नई दिल्ली", timestamp: "3 घंटे पहले", views: 8700 }),
-      n({ headline: "देशभर में मानसून सक्रिय, कई राज्यों में भारी बारिश का अलर्ट", summary: "मौसम विभाग ने अगले तीन दिनों के लिए चेतावनी जारी की है।", image: img("monsoon", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "मुंबई", timestamp: "5 घंटे पहले", views: 16800 }),
-      n({ headline: "भारतीय अर्थव्यवस्था की वृद्धि दर उम्मीद से बेहतर रही: रिपोर्ट", summary: "विशेषज्ञों ने आगामी तिमाही के लिए भी सकारात्मक अनुमान जताया।", image: img("economy", 700, 470), category: "national", catLabel: "राष्ट्रीय", district: "मुंबई", timestamp: "7 घंटे पहले", views: 7300 }),
-    ];
 
 
     /* ============================================================
-       Utils
+       Utilities
        ============================================================ */
+
     function fmtNum(num) {
-      if (num >= 100000) return (num / 100000).toFixed(1).replace('.0', '') + 'L';
-      if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'K';
-      return String(num);
+        num = Number(num || 0);
+
+        if (num >= 100000) {
+            return (num / 100000).toFixed(1).replace(".0", "") + "L";
+        }
+
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1).replace(".0", "") + "K";
+        }
+
+        return String(num);
     }
-    function catClass(cat) { return `cat-${cat}`; }
+
+
+    function catClass(category) {
+        return `cat-${category || ""}`;
+    }
+
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function articleUrl(article) {
+        return `/article/${encodeURIComponent(article.slug)}/`;
+    }
+
+
+    function formatDate(dateString) {
+        if (!dateString) {
+            return "";
+        }
+
+        const date = new Date(dateString);
+
+        if (Number.isNaN(date.getTime())) {
+            return "";
+        }
+
+        return date.toLocaleDateString("hi-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
 
     /* ============================================================
-       Card templates
+       Card Templates
        ============================================================ */
-    function tplStandard(item) {
-      return `
-  <a href="#" class="card-mpb hover-lift text-decoration-none">
-    <div class="thumb">
-      <img src="${item.image}" alt="${item.headline}" loading="lazy">
-      <span class="badge-cat ${catClass(item.category)}">${item.catLabel}</span>
-      ${item.isBreaking ? `<span class="badge-live"><span class="dot"></span>LIVE</span>` : ``}
-    </div>
-    <div class="body">
-      <h3 class="headline">${item.headline}</h3>
-      <p class="summary">${item.summary || ''}</p>
-      <div class="meta-row">
-        <span class="loc"><i class="bi bi-geo-alt"></i>${item.district}</span>
-        <span>${item.timestamp}</span>
-      </div>
-      <div class="meta-row">
-        <span class="stat-row">
-          <span><i class="bi bi-eye-fill"></i> ${fmtNum(item.views)}</span>
-        </span>
-      </div>
-    </div>
-  </a>`;
+
+    function tplStandard(article) {
+
+        const imageHtml = article.image
+            ? `
+                <img
+                    src="${escapeHtml(article.image)}"
+                    alt="${escapeHtml(article.headline)}"
+                    loading="lazy"
+                >
+              `
+            : `
+                <div
+                    class="d-flex align-items-center justify-content-center bg-light"
+                    style="height:100%; min-height:180px;"
+                >
+                    <i
+                        class="bi bi-image"
+                        style="font-size:42px; opacity:.35;"
+                        aria-hidden="true"
+                    ></i>
+                </div>
+              `;
+
+        return `
+            <a
+                href="${articleUrl(article)}"
+                class="card-mpb hover-lift text-decoration-none"
+            >
+
+                <div class="thumb">
+
+                    ${imageHtml}
+
+                    <span class="badge-cat ${catClass(article.category)}">
+                        ${escapeHtml(article.catLabel || article.category)}
+                    </span>
+
+                    ${
+                        article.isBreaking
+                            ? `
+                                <span class="badge-live">
+                                    <span class="dot"></span>
+                                    LIVE
+                                </span>
+                              `
+                            : ""
+                    }
+
+                </div>
+
+                <div class="body">
+
+                    <h3 class="headline">
+                        ${escapeHtml(article.headline)}
+                    </h3>
+
+                    <p class="summary">
+                        ${escapeHtml(article.summary)}
+                    </p>
+
+                    <div class="meta-row">
+
+                        <span class="loc">
+                            <i class="bi bi-geo-alt"></i>
+                            ${escapeHtml(article.district)}
+                        </span>
+
+                        <span>
+                            ${formatDate(article.publishedAt)}
+                        </span>
+
+                    </div>
+
+                    <div class="meta-row">
+
+                        <span class="stat-row">
+                            <span>
+                                <i class="bi bi-eye-fill"></i>
+                                ${fmtNum(article.views)}
+                            </span>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </a>
+        `;
     }
 
-    function tplHorizontal(item) {
-      return `
-  <a href="#" class="card-horizontal hover-lift text-decoration-none">
-    <div class="thumb"><img src="${item.image}" alt="${item.headline}" loading="lazy"></div>
-    <div class="body">
-      <span class="badge-cat ${catClass(item.category)}" style="align-self:flex-start;">${item.catLabel}</span>
-      <h3 class="headline">${item.headline}</h3>
-      <div class="meta-row">
-        <span class="loc"><i class="bi bi-geo-alt"></i>${item.district}</span>
-        <span>${item.timestamp}</span>
-      </div>
-    </div>
-  </a>`;
+
+    function tplFeaturedMain(article) {
+
+        return `
+            <a
+                href="${articleUrl(article)}"
+                class="card-featured text-decoration-none"
+            >
+
+                ${
+                    article.image
+                        ? `
+                            <img
+                                src="${escapeHtml(article.image)}"
+                                alt="${escapeHtml(article.headline)}"
+                            >
+                          `
+                        : ""
+                }
+
+                <div class="body">
+
+                    <span class="badge-cat ${catClass(article.category)} mb-2 d-inline-block">
+                        ${escapeHtml(article.catLabel || article.category)}
+                    </span>
+
+                    <h2 class="headline">
+                        ${escapeHtml(article.headline)}
+                    </h2>
+
+                    <p class="summary">
+                        ${escapeHtml(article.summary)}
+                    </p>
+
+                    <div class="meta-row">
+
+                        <span class="loc">
+                            <i class="bi bi-geo-alt"></i>
+                            ${escapeHtml(article.district)}
+                        </span>
+
+                        <span class="stat-row">
+                            <span>
+                                <i class="bi bi-eye-fill"></i>
+                                ${fmtNum(article.views)}
+                            </span>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </a>
+        `;
     }
 
 
-    function tplFeaturedMain(item) {
-      return `
-  <div class="card-featured">
-    <img src="${item.image}" alt="${item.headline}">
-    <div class="body">
-      <span class="badge-cat ${catClass(item.category)} mb-2 d-inline-block">${item.catLabel}</span>
-      <h2 class="headline">${item.headline}</h2>
-      <p class="summary">${item.summary}</p>
-      <div class="meta-row">
-        <span class="loc"><i class="bi bi-geo-alt"></i>${item.district}</span>
-        <span class="stat-row">
-          <span><i class="bi bi-eye-fill"></i> ${fmtNum(item.views)}</span>
-        </span>
-      </div>
-    </div>
-  </div>`;
+    function tplFeaturedSub(article) {
+
+        return `
+            <a
+                href="${articleUrl(article)}"
+                class="card-featured-sub text-decoration-none"
+                style="min-height:120px;"
+            >
+
+                ${
+                    article.image
+                        ? `
+                            <img
+                                src="${escapeHtml(article.image)}"
+                                alt="${escapeHtml(article.headline)}"
+                            >
+                          `
+                        : ""
+                }
+
+                <div class="body">
+
+                    <span class="badge-cat ${catClass(article.category)} mb-1 d-inline-block">
+                        ${escapeHtml(article.catLabel || article.category)}
+                    </span>
+
+                    <h3 class="headline">
+                        ${escapeHtml(article.headline)}
+                    </h3>
+
+                </div>
+
+            </a>
+        `;
     }
 
-    function tplFeaturedSub(item) {
-      return `
-  <a href="#" class="card-featured-sub text-decoration-none" style="min-height:120px;">
-    <img src="${item.image}" alt="${item.headline}">
-    <div class="body">
-      <span class="badge-cat ${catClass(item.category)} mb-1 d-inline-block">${item.catLabel}</span>
-      <h3 class="headline">${item.headline}</h3>
-    </div>
-  </a>`;
-    }
 
     /* ============================================================
-       Render logic
+       API
        ============================================================ */
-    function byCategory(cat, limit) {
-      const arr = NEWS.filter(x => x.category === cat);
-      return limit ? arr.slice(0, limit) : arr;
+
+async function loadHomeData() {
+
+        try {
+
+            const response = await fetch(
+                "/api/home/",
+                {
+                    method: "GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Home API returned HTTP ${response.status}`
+                );
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error("Home API returned success=false");
+            }
+
+            HOME_DATA = {
+                // breaking: data.breaking || [],
+                hero: data.hero || [],
+                latest: data.latest || [],
+                categories: data.categories || []
+            };
+              window.HOME_DATA = HOME_DATA;
+
+            renderHome();
+
+        } catch (error) {
+
+            console.error(
+                "Home data loading failed:",
+                error
+            );
+
+        }
     }
+
+
+    /* ============================================================
+       Category Helpers
+       ============================================================ */
+
+    function getCategoryArticles(slug) {
+
+        const categoryData =
+            HOME_DATA.categories.find(
+                item => item.category.slug === slug
+            );
+
+        return categoryData
+            ? categoryData.articles || []
+            : [];
+    }
+
+
+    /* ============================================================
+       Render Hero
+       ============================================================ */
 
     function renderHero() {
-      const featured = NEWS.filter(x => x.isFeatured);
-      document.getElementById('heroFeaturedSlot').innerHTML = tplFeaturedMain(featured[0]);
-      document.getElementById('heroSubSlot').innerHTML = featured.slice(1, 3).map(tplFeaturedSub).join('') +
-        `<div class="d-none"></div>`;
-      // stack the two sub cards with gap
-      document.getElementById('heroSubSlot').style.display = 'grid';
-      document.getElementById('heroSubSlot').style.gap = '12px';
-      document.getElementById('heroSubSlot').style.gridTemplateRows = '1fr 1fr';
+
+        const heroFeaturedSlot =
+            document.getElementById("heroFeaturedSlot");
+
+        const heroSubSlot =
+            document.getElementById("heroSubSlot");
+
+
+        if (!heroFeaturedSlot || !heroSubSlot) {
+            return;
+        }
+
+
+        let featured = HOME_DATA.hero;
+
+
+        /*
+         * Currently /api/home/ returns hero: [].
+         *
+         * Until EditorialPlacement is configured,
+         * use the first articles from categories as fallback.
+         */
+
+        if (!featured.length) {
+
+            const fallback = [];
+
+            HOME_DATA.categories.forEach(category => {
+
+                category.articles.forEach(article => {
+
+                    if (fallback.length < 3) {
+                        fallback.push(article);
+                    }
+
+                });
+
+            });
+
+            featured = fallback;
+        }
+
+
+        if (!featured.length) {
+
+            heroFeaturedSlot.innerHTML = "";
+            heroSubSlot.innerHTML = "";
+
+            return;
+        }
+
+
+        heroFeaturedSlot.innerHTML =
+            tplFeaturedMain(featured[0]);
+
+
+        heroSubSlot.innerHTML =
+            featured
+                .slice(1, 3)
+                .map(tplFeaturedSub)
+                .join("");
+
+
+        heroSubSlot.style.display = "grid";
+        heroSubSlot.style.gap = "12px";
+        heroSubSlot.style.gridTemplateRows =
+            "1fr 1fr";
     }
+
+
+    /* ============================================================
+       Render Latest
+       ============================================================ */
 
     function renderLatest() {
-      const latest = [...NEWS].slice(-8).reverse();
-      document.getElementById('latestNewsSlot').innerHTML = latest.map(tplStandard).join('');
+
+        const slot =
+            document.getElementById("latestNewsSlot");
+
+        if (!slot) {
+            return;
+        }
+
+
+        let latest = HOME_DATA.latest;
+
+
+        /*
+         * API currently returns latest: [].
+         *
+         * Use all category articles as temporary fallback.
+         */
+
+        if (!latest.length) {
+
+            latest = HOME_DATA.categories
+                .flatMap(category => category.articles || [])
+                .sort(
+                    (a, b) =>
+                        new Date(b.updatedAt || b.publishedAt) -
+                        new Date(a.updatedAt || a.publishedAt)
+                )
+                .slice(0, 8);
+        }
+
+
+        slot.innerHTML =
+            latest
+                .map(tplStandard)
+                .join("");
     }
 
 
-    function renderNational() {
-      document.getElementById('nationalSlot').innerHTML = byCategory('national').map(tplStandard).join('');
+    /* ============================================================
+       Render Category Section
+       ============================================================ */
+
+function renderCategories() {
+
+    const container =
+        document.getElementById("homeCategoriesSlot");
+
+    if (!container) {
+        return;
     }
 
-    function renderRowSection(slotId, cat) {
-      const items = byCategory(cat, 4);
-      document.getElementById(slotId).innerHTML = items.map(item => `<div class="col-12 col-sm-6 col-lg-3">${tplStandard(item)}</div>`).join('');
-    }
+    container.innerHTML = "";
 
+    HOME_DATA.categories.forEach(function (categoryData, index) {
+
+        const category =
+            categoryData.category;
+
+        const articles =
+            categoryData.articles || [];
+
+        if (!articles.length) {
+            return;
+        }
+
+        const section =
+            document.createElement("section");
+
+        section.className =
+            "news-section" +
+            (index % 2 === 1 ? " alt-bg" : "");
+
+        section.innerHTML = `
+            <div class="section-heading">
+                <h2>
+                    <span class="bar"></span>
+                    ${escapeHtml(category.name)}
+                </h2>
+
+                <a
+                    href="/category/${encodeURIComponent(category.slug)}/"
+                    class="view-all"
+                >
+                    सभी देखें
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </div>
+
+            <div class="row g-3">
+                ${
+                    articles
+                        .slice(0, 4)
+                        .map(function(article) {
+                            return `
+                                <div class="col-12 col-sm-6 col-lg-3">
+                                    ${tplStandard(article)}
+                                </div>
+                            `;
+                        })
+                        .join("")
+                }
+            </div>
+        `;
+
+        container.appendChild(section);
+    });
+}
+
+
+    /* ============================================================
+       Breaking Ticker
+       ============================================================ */
 
     function renderTicker() {
-      const breaking = NEWS.filter(x => x.isBreaking);
-      const pool = breaking.length ? breaking : NEWS.slice(0, 5);
-      const track = document.getElementById('tickerTrack');
-      const sep = '<span aria-hidden="true" style="opacity:.6;">●</span>';
-      const items = pool.map(item => `<a href="#">${item.headline}</a>`).join(sep);
-      // duplicate content back-to-back so the loop reads seamlessly
-      track.innerHTML = items + sep + items;
 
-      document.getElementById('tickerClose').addEventListener('click', () => {
-        document.getElementById('tickerWrap').style.display = 'none';
-      });
+        const track =
+            document.getElementById("tickerTrack");
+
+        if (!track) {
+            return;
+        }
+
+
+        let breaking =
+            HOME_DATA.breaking;
+
+
+        /*
+         * API currently returns breaking: [].
+         *
+         * Use first few articles as fallback.
+         */
+
+        if (!breaking.length) {
+
+            breaking = HOME_DATA.categories
+                .flatMap(category => category.articles || [])
+                .slice(0, 5);
+        }
+
+
+        const separator =
+            `<span aria-hidden="true" style="opacity:.6;">●</span>`;
+
+
+        const items =
+            breaking
+                .map(
+                    article => `
+                        <a href="${articleUrl(article)}">
+                            ${escapeHtml(article.headline)}
+                        </a>
+                    `
+                )
+                .join(separator);
+
+
+        track.innerHTML =
+            items + separator + items;
+
+
+        const closeButton =
+            document.getElementById("tickerClose");
+
+
+        if (closeButton) {
+
+            closeButton.onclick = function () {
+
+                const wrap =
+                    document.getElementById("tickerWrap");
+
+                if (wrap) {
+                    wrap.style.display = "none";
+                }
+
+            };
+
+        }
     }
 
     /* ============================================================
-       Misc interactions
+       Date
+       ============================================================ */
+
+    function setTodayDate() {
+
+        const element =
+            document.getElementById("todayDate");
+
+        if (!element) {
+            return;
+        }
+
+
+        const days = [
+            "रविवार",
+            "सोमवार",
+            "मंगलवार",
+            "बुधवार",
+            "गुरुवार",
+            "शुक्रवार",
+            "शनिवार"
+        ];
+
+
+        const months = [
+            "जनवरी",
+            "फ़रवरी",
+            "मार्च",
+            "अप्रैल",
+            "मई",
+            "जून",
+            "जुलाई",
+            "अगस्त",
+            "सितंबर",
+            "अक्टूबर",
+            "नवंबर",
+            "दिसंबर"
+        ];
+
+
+        const date = new Date();
+
+
+        element.textContent =
+            `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+
+    /* ============================================================
+       Back To Top
        ============================================================ */
 
     function initBackToTop() {
-      const btn = document.getElementById('backToTop');
-      window.addEventListener('scroll', () => {
-        btn.classList.toggle('show', window.scrollY > 500);
-      });
-      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        const button =
+            document.getElementById("backToTop");
+
+        if (!button) {
+            return;
+        }
+
+
+        window.addEventListener(
+            "scroll",
+            function () {
+
+                button.classList.toggle(
+                    "show",
+                    window.scrollY > 500
+                );
+
+            }
+        );
+
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            }
+        );
     }
 
-    function setTodayDate() {
-      const el = document.getElementById('todayDate');
-      if (!el) return;
-      const days = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
-      const months = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
-      const d = new Date();
-      el.textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    }
+
+    /* ============================================================
+       Main Render
+       ============================================================ */
+
+function renderHome() {
+
+    // renderTicker();
+
+    renderHero();
+
+    renderLatest();
+
+      renderCategories();
+
+   
+}
+
 
     /* ============================================================
        Init
        ============================================================ */
-    document.addEventListener('DOMContentLoaded', () => {
-      setTodayDate();
-      renderTicker();
-      renderHero();
-      renderLatest();
-      renderNational();
-      renderRowSection('politicsSlot', 'politics');
-      renderRowSection('crimeSlot', 'crime');
-      renderRowSection('educationSlot', 'education');
-      renderRowSection('businessSlot', 'business');
-      renderRowSection('sportsSlot', 'sports');
-      renderRowSection('entertainmentSlot', 'entertainment');
-      initBackToTop();
-    });
-  </script>
 
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            setTodayDate();
+
+            initBackToTop();
+
+            loadHomeData();
+
+        }
+    );
+
+
+    /*
+     * Expose for browser debugging.
+     */
+
+    window.loadHomeData = loadHomeData;
+   
+
+})();
+
+</script>
 
 {% endblock %}

@@ -1,5 +1,8 @@
 from django.contrib import admin
-
+from django.http import JsonResponse
+from django.utils.text import slugify
+from unidecode import unidecode
+from django.urls import path
 from .models import (
     Article,
     ArticleContentBlock,
@@ -7,9 +10,24 @@ from .models import (
     EditorialPlacement,
 )
 
+def admin_slugify(request):
+    text = request.GET.get("text", "").strip()
 
+    if not text:
+        return JsonResponse({"slug": ""})
+
+    transliterated = unidecode(text)
+
+    slug = slugify(
+        transliterated,
+        allow_unicode=False,
+    )
+
+    return JsonResponse({"slug": slug})
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    class Media:
+        js = ("core/js/admin-slug.js",)
     list_display = (
         "name",
         "slug",
@@ -29,9 +47,6 @@ class CategoryAdmin(admin.ModelAdmin):
         "slug",
     )
 
-    prepopulated_fields = {
-        "slug": ("name",),
-    }
 
     ordering = (
         "display_order",
@@ -65,6 +80,8 @@ class ArticleContentBlockInline(admin.StackedInline):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
+    class Media:
+        js = ("core/js/admin-slug.js",)
     inlines = (
         ArticleContentBlockInline,
     )
@@ -96,9 +113,6 @@ class ArticleAdmin(admin.ModelAdmin):
         "district",
     )
 
-    prepopulated_fields = {
-        "slug": ("headline",),
-    }
 
     autocomplete_fields = (
         "category",

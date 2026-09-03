@@ -206,7 +206,7 @@
 
 <div class="container-fluid px-page static-page-shell py-4">
       <nav aria-label="ब्रेडक्रम्ब" class="breadcrumb-bar">
-        <a href="index.html">होम</a>
+        <a href="/">होम</a>
         <span class="sep">/</span>
         <span class="current">हमारे बारे में</span>
       </nav>
@@ -250,7 +250,7 @@
         </section>
         <section class="static-section">
           <h2>संपर्क</h2>
-          <p>किसी भी सुझाव, फीडबैक या सहयोग के लिए हमसे <a href="contact.html">संपर्क पेज</a> के माध्यम से जुड़ें।</p>
+          <p>किसी भी सुझाव, फीडबैक या सहयोग के लिए हमसे <a href="/contact">संपर्क पेज</a> के माध्यम से जुड़ें।</p>
         </section>
       </div>
 
@@ -298,12 +298,12 @@ document.addEventListener('click', function (e) {
       const nav = document.getElementById('districtQuickNav');
       if (nav) {
         nav.innerHTML = DISTRICTS.slice(0, 8).map(d =>
-          `<a href="index.html#mp-news" class="text-white-50 small text-decoration-none">${d}</a>`).join('');
+          `<a href="/" class="text-white-50 small text-decoration-none">${d}</a>`).join('');
       }
       const mobileChips = document.getElementById('mobileDistrictChips');
       if (mobileChips) {
         mobileChips.innerHTML = DISTRICTS.slice(0, 10).map(d =>
-          `<a href="index.html#mp-news" class="mobile-district-chip" style="text-decoration:none;">${d}</a>`).join('');
+          `<a href="/" class="mobile-district-chip" style="text-decoration:none;">${d}</a>`).join('');
       }
     }
 
@@ -316,7 +316,7 @@ document.addEventListener('click', function (e) {
       const track = document.getElementById('tickerTrack');
       if (track) {
         const sep = '<span aria-hidden="true" style="opacity:.6;">●</span>';
-        const html = items.map(t => `<a href="index.html">${t}</a>`).join(sep);
+        const html = items.map(t => `<a href="/">${t}</a>`).join(sep);
         track.innerHTML = html + sep + html;
       }
       const closeBtn = document.getElementById('tickerClose');

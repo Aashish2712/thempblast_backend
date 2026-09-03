@@ -1,5 +1,7 @@
 from pathlib import Path
-
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.text import slugify
+from unidecode import unidecode
 from django.shortcuts import render
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -13,7 +15,21 @@ from .models import (
     EditorialPlacement,
 )
 
+@staff_member_required
+def admin_slugify(request):
+    text = request.GET.get("text", "").strip()
 
+    if not text:
+        return JsonResponse({"slug": ""})
+
+    transliterated = unidecode(text)
+
+    slug = slugify(
+        transliterated,
+        allow_unicode=False,
+    )
+
+    return JsonResponse({"slug": slug})
 def home(request):
     return render(request, "thempblast/index.html")
 
@@ -367,7 +383,112 @@ def serialize_article(article):
             for block in content_blocks
         ],
     }
+def home_data(request):
+    # ---------------------------------------------------------
+    # 1. Breaking news
+    # ---------------------------------------------------------
+    breaking_placements = get_editorial_articles(
+        EditorialPlacement.PlacementType.BREAKING_TICKER
+    )
 
+    breaking = [
+        serialize_article(placement.article)
+        for placement in breaking_placements
+    ]
+
+    # ---------------------------------------------------------
+    # 2. Hero / Featured news
+    # ---------------------------------------------------------
+    hero_placements = get_editorial_articles(
+        EditorialPlacement.PlacementType.HERO_FEATURED
+    )
+
+    hero = [
+        serialize_article(placement.article)
+        for placement in hero_placements
+    ]
+
+    # ---------------------------------------------------------
+    # 3. Latest news
+    # ---------------------------------------------------------
+    latest_placements = get_editorial_articles(
+        EditorialPlacement.PlacementType.LATEST_NEWS
+    )
+
+    latest = [
+        serialize_article(placement.article)
+        for placement in latest_placements
+    ]
+
+    # ---------------------------------------------------------
+    # 4. Homepage categories
+    #
+    # Conditions:
+    # - active
+    # - not archived
+    # - at least 3 published articles
+    # - ordered by display_order
+    # - maximum 5 categories
+    # ---------------------------------------------------------
+    categories = (
+        Category.objects
+        .filter(
+            is_active=True,
+            is_archived=False,
+            articles__is_published=True,
+        )
+        .annotate(
+            published_article_count=models.Count(
+                "articles",
+                filter=models.Q(
+                    articles__is_published=True,
+                ),
+                distinct=True,
+            )
+        )
+        .filter(
+            published_article_count__gte=3,
+        )
+        .order_by(
+            "display_order",
+            "name",
+        )
+        .distinct()[:5]
+    )
+
+    category_sections = []
+
+    for category in categories:
+        articles = (
+            Article.objects
+            .select_related("category")
+            .prefetch_related("content_blocks")
+            .filter(
+                category=category,
+                is_published=True,
+            )
+            .order_by(
+                "-updated_at",
+                "-published_at",
+                "-created_at",
+            )[:4]
+        )
+
+        category_sections.append({
+            "category": serialize_category(category),
+            "articles": [
+                serialize_article(article)
+                for article in articles
+            ],
+        })
+
+    return JsonResponse({
+        "success": True,
+        "breaking": breaking,
+        "hero": hero,
+        "latest": latest,
+        "categories": category_sections,
+    })
 
 def home_breaking(request):
     placements = get_editorial_articles(

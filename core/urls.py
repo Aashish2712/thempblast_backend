@@ -3,6 +3,7 @@ from . import views
 
 
 urlpatterns = [
+    
     # Website pages
     path("", views.home, name="home"),
     path(
@@ -28,6 +29,11 @@ urlpatterns = [
     ),
 
     # Home editorial APIs
+    path(
+    "api/home/",
+    views.home_data,
+    name="home_data",
+),
     path(
         "api/home/breaking/",
         views.home_breaking,
@@ -63,10 +69,9 @@ urlpatterns = [
         name="article_list",
     ),
     path(
-        "api/articles/slug:<slug>/",
+        "api/articles/<slug:slug>/",
         views.article_detail,
-        name="article_detail",
-    ),
+        name="article_detail"),
 
     # Articles belonging to a category
     path(

@@ -326,47 +326,44 @@
         nav.innerHTML = "";
 
 
-        /*
-         * Home
-         */
+        //Home
 
         const homeLink = document.createElement("a");
 
         homeLink.href = "/";
         homeLink.className = "nav-link";
-        homeLink.setAttribute("data-bs-dismiss", "offcanvas");
+      
         homeLink.setAttribute("data-nav-home", "");
 
         homeLink.innerHTML = `
+             होम
             <i class="bi bi-house-door me-2"></i>
-            होम
         `;
 
         nav.appendChild(homeLink);
 
 
-        /*
-         * Latest News
-         */
+        
+          //Latest News
+         
 
         const latestLink = document.createElement("a");
 
         latestLink.href = "/#latest";
         latestLink.className = "nav-link";
-        latestLink.setAttribute("data-bs-dismiss", "offcanvas");
+   
         latestLink.setAttribute("data-nav-latest", "");
 
         latestLink.innerHTML = `
+             ताज़ा खबरें
             <i class="bi bi-lightning-charge me-2"></i>
-            ताज़ा खबरें
         `;
 
         nav.appendChild(latestLink);
 
 
-        /*
-         * Dynamic categories
-         */
+         //Dynamic categories
+         
 
         const categories = getCategories();
 
@@ -376,18 +373,40 @@
             link.href = getCategoryUrl(category);
             link.className = "nav-link";
 
-            link.setAttribute("data-bs-dismiss", "offcanvas");
+      
             link.setAttribute("data-category-slug", category.slug);
 
             link.innerHTML = `
-                <i class="bi bi-chevron-right me-2"></i>
                 ${escapeHtml(category.name)}
+                <i class="bi bi-chevron-right me-2"></i>
             `;
 
             nav.appendChild(link);
         });
     }
+document.addEventListener("click", function (event) {
+    const link = event.target.closest("#mobileCategoryNav a");
 
+    if (!link) {
+        return;
+    }
+
+    const offcanvasElement = document.getElementById("mobileNav");
+
+    if (!offcanvasElement) {
+        return;
+    }
+
+    const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+
+    if (offcanvas) {
+        offcanvas.hide();
+    }
+
+    // IMPORTANT:
+    // Do NOT use event.preventDefault()
+    // The browser must continue with the link navigation.
+});
 
     /* ============================================================
        FOOTER CATEGORY NAVIGATION

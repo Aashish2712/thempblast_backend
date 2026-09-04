@@ -282,6 +282,20 @@
         homeLink.textContent = "होम";
 
         nav.appendChild(homeLink);
+        const aboutLink = document.createElement("a");
+
+        aboutLink.href = "/about";
+        aboutLink.setAttribute("data-nav-about", "");
+        aboutLink.textContent = "हमारे बारे में";
+
+        nav.appendChild(aboutLink);
+        const contactLink = document.createElement("a");
+
+        contactLink.href = "/contact";
+        contactLink.setAttribute("data-nav-contact", "");
+        contactLink.textContent = "संपर्क करें";
+
+        nav.appendChild(contactLink);
 
 
         const latestLink = document.createElement("a");
@@ -341,8 +355,37 @@
         `;
 
         nav.appendChild(homeLink);
+        //about
 
+        const aboutLink = document.createElement("a");
 
+        aboutLink.href = "/about";
+        aboutLink.className = "nav-link";
+      
+        aboutLink.setAttribute("data-nav-about", "");
+
+        aboutLink.innerHTML = `
+             हमारे बारे में
+            <i class="bi bi-info-circle me-2"></i>
+        `;
+
+        nav.appendChild(aboutLink);
+        //contact
+
+        const contactLink = document.createElement("a");
+
+        contactLink.href = "/contact";
+        contactLink.className = "nav-link";
+      
+        contactLink.setAttribute("data-nav-contact", "");
+
+        contactLink.innerHTML = `
+             संपर्क करें
+            <i class="bi bi-envelope me-2"></i>
+        `;
+
+        nav.appendChild(contactLink);
+      
         
           //Latest News
          

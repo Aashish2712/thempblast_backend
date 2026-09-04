@@ -74,11 +74,30 @@ def signup_verify(request):
         }, status=400)
 
 
+# @require_POST
+# def login_request_otp(request):
+#     try:
+#         data = _json_body(request)
+
+#         email = data.get("email", "")
+
+#         request_login_otp(email)
+
+#         return JsonResponse({
+#             "success": True,
+#             "message": "OTP sent successfully.",
+#         })
+
+#     except ValueError:
+#         # Don't reveal whether an email belongs to an account.
+#         return JsonResponse({
+#             "success": True,
+#             "message": "If the account is eligible, an OTP has been sent.",
+#         })
 @require_POST
 def login_request_otp(request):
     try:
         data = _json_body(request)
-
         email = data.get("email", "")
 
         request_login_otp(email)
@@ -88,12 +107,11 @@ def login_request_otp(request):
             "message": "OTP sent successfully.",
         })
 
-    except ValueError:
-        # Don't reveal whether an email belongs to an account.
+    except ValueError as exc:
         return JsonResponse({
-            "success": True,
-            "message": "If the account is eligible, an OTP has been sent.",
-        })
+            "success": False,
+            "message": str(exc),
+        }, status=400)
 
 
 @require_POST

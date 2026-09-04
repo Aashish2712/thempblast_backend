@@ -236,7 +236,7 @@ def request_login_otp(email):
 
     if user is None:
         raise ValueError(
-            "Unable to process login for this email."
+            "Your email is not registered. Please sign up first."
         )
 
     return request_otp(

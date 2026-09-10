@@ -1,5 +1,26 @@
 {% extends "thempblast/base.html" %}
 
+{% block social_meta %}
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ article.headline|default:'THE MP BLAST' }}">
+    <meta property="og:description" content="{{ article.summary|default:article.subheadline|default:'THE MP BLAST — हर खबर पर हमारी नजर' }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    
+    {% if article.featured_image %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.featured_image.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ article.headline|default:'THE MP BLAST' }}">
+    <meta name="twitter:description" content="{{ article.summary|default:article.subheadline|default:'THE MP BLAST — हर खबर पर हमारी नजर' }}">
+
+    {% if article.featured_image %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.featured_image.url }}">
+    {% endif %}
+
+{% endblock %}
+
 {% block content %}
 
 <style>
@@ -410,9 +431,29 @@
         <!-- =============== ACTIONS: like / views / save / share =============== -->
         <div class="article-actions">
           <div class="share-bar" role="group" aria-label="शेयर करें">
-          
-            <button type="button" id="shareCopy" aria-label="लिंक कॉपी करें"><i class="bi bi-link-45deg"></i></button>
+
+            <button type="button" id="shareFacebook" aria-label="Facebook पर शेयर करें" title="Facebook पर शेयर करें">
+              <i class="bi bi-facebook"></i>
+            </button>
+
+            <button type="button" id="shareCopy" aria-label="लिंक कॉपी करें">
+              <i class="bi bi-link-45deg"></i>
+            </button>
+
+            <button type="button" id="shareWhatsApp" aria-label="WhatsApp पर शेयर करें" title="WhatsApp पर शेयर करें">
+              <i class="bi bi-whatsapp"></i>
+            </button>
+
+            <button type="button" id="shareTwitter" aria-label="X पर शेयर करें" title="X पर शेयर करें">
+              <i class="bi bi-twitter-x"></i>
+            </button>
+
+            <button type="button" id="shareNative" aria-label="शेयर करें" title="शेयर करें">
+              <i class="bi bi-share"></i>
+            </button>
+
           </div>
+          
         </div>
 
 
@@ -775,17 +816,37 @@
     }
 
     function initShare() {
+      const whatsappBtn = document.getElementById('shareWhatsApp');
       const copyBtn = document.getElementById('shareCopy');
       const facebookBtn = document.getElementById('shareFacebook');
       const twitterBtn = document.getElementById('shareTwitter');
+      const nativeShareBtn = document.getElementById('shareNative');
+      // whatsapp share
+      if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', () => {
+        const url = window.location.href;
 
+        const headline =
+            document.getElementById('articleHeadline')?.textContent?.trim() ||
+            document.title;
+
+        const message = `${headline}\n\n${url}`;
+
+        window.open(
+            `https://wa.me/?text=${encodeURIComponent(message)}`,
+            '_blank',
+            'noopener'
+          );
+        });
+      }
+      // facebook share
       if (facebookBtn) {
         facebookBtn.addEventListener('click', () => {
           const url = encodeURIComponent(window.location.href);
           window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,width=600,height=500');
         });
       }
-
+      // twitter share
       if (twitterBtn) {
         twitterBtn.addEventListener('click', () => {
           const url = encodeURIComponent(window.location.href);
@@ -802,7 +863,35 @@
           );
         });
       }
+      // Native share
+      if (nativeShareBtn) {
+    nativeShareBtn.addEventListener('click', async () => {
+        const url = window.location.href;
 
+        const headline =
+            document.getElementById('articleHeadline')?.textContent?.trim() ||
+            document.title;
+
+        if (!navigator.share) {
+            showToast('इस डिवाइस पर शेयर विकल्प उपलब्ध नहीं है');
+            return;
+        }
+
+        try {
+            await navigator.share({
+                title: headline,
+                text: headline,
+                url: url
+            });
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Native sharing failed:', error);
+                showToast('शेयर नहीं हो सका');
+            }
+        }
+    });
+}
+// copy link to clipboard 
       if (copyBtn) {
         copyBtn.addEventListener('click', async () => {
           try {

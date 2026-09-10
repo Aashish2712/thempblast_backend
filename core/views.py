@@ -35,11 +35,33 @@ def home(request):
 
 
 def article(request, slug):
+    try:
+        article_obj = (
+            Article.objects
+            .select_related("category")
+            .get(
+                slug=slug,
+                is_published=True,
+                category__is_active=True,
+                category__is_archived=False,
+            )
+        )
+    except Article.DoesNotExist:
+        return render(
+            request,
+            "thempblast/article.html",
+            {
+                "article_slug": slug,
+            },
+            status=404,
+        )
+
     return render(
         request,
         "thempblast/article.html",
         {
             "article_slug": slug,
+            "article": article_obj,
         },
     )
 

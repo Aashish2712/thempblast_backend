@@ -14,6 +14,7 @@ from .models import (
     Category,
     EditorialPlacement,
 )
+from django.db.models import F
 
 @staff_member_required
 def admin_slugify(request):
@@ -638,6 +639,18 @@ def article_detail(request, slug):
             },
             status=404,
         )
+
+    viewed_articles = request.session.get("viewed_articles", [])
+
+    if article.id not in viewed_articles:
+        Article.objects.filter(pk=article.pk).update(
+            views=F("views") + 1
+        )
+
+        viewed_articles.append(article.id)
+        request.session["viewed_articles"] = viewed_articles
+
+        article.refresh_from_db(fields=["views"])
 
     return JsonResponse({
         "success": True,
